@@ -1,9 +1,9 @@
-// Forms in a modal: visible labels, errors beside the field and tied to it for screen readers,
-// and focus moved to the first problem when saving.
-import { $, $$, html, raw } from "./dom.js";
+// Forms: visible labels, errors beside the field and tied to it for screen readers, and focus moved
+// to the first problem when saving. openForm shows one in a modal, mountForm places one on a page.
+import { $, $$, html, raw, setHTML } from "./dom.js";
 import { openModal } from "./modal.js";
 import { amountError, dateError, required } from "../core/validate.js";
-import { CURRENCIES, num } from "../core/money.js";
+import { CURRENCIES } from "../core/money.js";
 import { renderPaymentField, readPaymentField, mountPaymentField, paymentFieldError } from "./payment-field.js";
 
 let formCounter = 0;
@@ -30,7 +30,8 @@ function fieldControl(f, value, id, ctx) {
         ${(f.options || []).map(([v, l]) => html`<option value="${v}" ${String(v) === String(value ?? "") ? raw("selected") : ""}>${l}</option>`)}
       </select>`;
     case "money": {
-      const symbol = CURRENCIES.find((c) => c.code === ctx?.currency)?.symbol || "₹";
+      const currency = ctx?.state?.().profile.currency || "INR";
+      const symbol = CURRENCIES.find((c) => c.code === currency)?.symbol || "₹";
       const shown = value === "" || value == null ? "" : value;
       return html`<div class="input-wrap">
         <span class="prefix" aria-hidden="true">${symbol}</span>
@@ -62,7 +63,7 @@ function renderField(f, values, ctx) {
   if (f.type === "note") return html`<div class="field field-full small muted" data-field="${f.k || ""}">${f.body}</div>`;
   if (f.type === "custom") return html`<div class="${cls}" data-field="${f.k}">${f.label ? html`<span class="field-label">${f.label}</span>` : ""}<div data-custom="${f.k}"></div>${hint}${msg}</div>`;
   if (f.type === "payment") {
-    return html`<div class="field field-full" data-field="${f.k}" role="group" aria-label="${f.label || "How it was paid"}">
+    return html`<div class="field field-full pay-field" data-field="${f.k}" role="group" aria-label="${f.label || "How it was paid"}">
       ${renderPaymentField(id, f, value, ctx)}${hint}${msg}
     </div>`;
   }
@@ -125,19 +126,13 @@ function checkField(f, value, values) {
   return f.validate?.(value, values) || "";
 }
 
-/**
- * Opens a form.
- * fields: [{ k, label, type, required, full, hint, options, when, validate, warn, onChange, default }]
- * type: text, email, tel, money, number, date, select, text-list, textarea, checkbox, segmented, payment, custom, section, note
- * onSubmit(values, api): return false to keep the form open. api.setError(key, message) shows a message on a field.
- */
-export function openForm({ title, intro, fields, values = {}, submitLabel = "Save", size = "", ctx, onSubmit, cancelLabel = "Cancel", footNote = null }) {
-  formCounter++;
-  const body = html`
-    ${intro ? html`<div class="field-hint form-intro" data-intro>${intro}</div>` : ""}
-    <div class="form-grid">${fields.map((f) => renderField(f, values, ctx))}</div>`;
-  let initial = "";
-  const collect = (root) => {
+const formBody = ({ intro, fields, values, ctx }) => html`
+  ${intro ? html`<div class="field-hint form-intro" data-intro>${intro}</div>` : ""}
+  <div class="form-grid">${fields.map((f) => renderField(f, values, ctx))}</div>`;
+
+/** Connects a rendered form to its behaviour. Returns the form's api. */
+function wireForm(root, formEl, { fields, values, ctx, onSubmit, afterSubmit, closeForm }) {
+  const collect = () => {
     const out = { ...values };
     for (const f of fields) {
       if (VALUELESS.has(f.type) || !f.k) continue;
@@ -146,16 +141,6 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
     }
     return out;
   };
-  const m = openModal({
-    title, body, size, form: true,
-    foot: html`
-      ${footNote ? html`<span class="modal-foot-note" data-foot-note>${footNote}</span>` : ""}
-      <button type="button" class="btn" data-modal-close>${cancelLabel}</button>
-      <button type="submit" class="btn btn-primary">${submitLabel}</button>`,
-    isDirty: () => JSON.stringify(collect(m.dialog)) !== initial,
-  });
-  const root = m.dialog;
-
   const setError = (k, message) => {
     const el = $(`[data-error-for="${k}"]`, root);
     if (el) el.textContent = message || "";
@@ -165,10 +150,10 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
     });
   };
   const setWarning = (k, message) => { const el = $(`[data-warn-for="${k}"]`, root); if (el) el.textContent = message || ""; };
-
   const api = {
-    root, setError, setWarning, close: () => m.close(),
-    values: () => collect(root),
+    root, setError, setWarning, close: closeForm,
+    values: collect,
+    snapshot: () => JSON.stringify(collect()),
     setValue(k, v) {
       const el = $(`[name="${k}"]`, root);
       if (el) { el.value = v ?? ""; el.dispatchEvent(new Event("input", { bubbles: true })); }
@@ -177,7 +162,7 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
   };
 
   const applyVisibility = () => {
-    const current = collect(root);
+    const current = collect();
     for (const f of fields) {
       if (!f.when) continue;
       const wrap = $(`[data-field="${f.k}"]`, root);
@@ -192,8 +177,6 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
     if (f.type === "payment") mountPaymentField($(`[data-field="${f.k}"]`, root), f, ctx);
   }
 
-  root.addEventListener("input", onChange);
-  root.addEventListener("change", onChange);
   function onChange(e) {
     const name = e.target.name || e.target.closest("[data-field]")?.dataset.field;
     const f = fields.find((x) => x.k === name);
@@ -202,20 +185,19 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
     for (const other of fields) other.onAnyChange?.(current, api);
     if (f && $(`[data-error-for="${f.k}"]`, root)?.textContent) setError(f.k, checkField(f, current[f.k], current));
   }
+  root.addEventListener("input", onChange);
+  root.addEventListener("change", onChange);
   root.addEventListener("focusout", (e) => {
-    const name = e.target.name;
-    const f = fields.find((x) => x.k === name);
-    if (f && e.target.value !== "") setError(f.k, checkField(f, readField(root, f), collect(root)));
+    const f = fields.find((x) => x.k === e.target.name);
+    if (f && e.target.value !== "") setError(f.k, checkField(f, readField(root, f), collect()));
   });
 
   const current = applyVisibility();
-  initial = JSON.stringify(current);
   for (const other of fields) other.onAnyChange?.(current, api);
-  initial = JSON.stringify(collect(root));
 
-  $("form", root).addEventListener("submit", async (e) => {
+  formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const now = collect(root);
+    const now = collect();
     let firstBad = null;
     for (const f of fields) {
       if (VALUELESS.has(f.type) || !f.k) continue;
@@ -229,12 +211,48 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
       $(`[data-field="${firstBad}"] input, [data-field="${firstBad}"] select, [data-field="${firstBad}"] textarea, [data-field="${firstBad}"] button`, root)?.focus();
       return;
     }
-    // Hidden fields don't count.
+    // Fields that are hidden don't count.
     for (const f of fields) if (f.when && !f.when(now) && f.k) delete now[f.k];
     const result = await onSubmit(now, api);
-    if (result !== false) m.close();
+    if (result !== false) afterSubmit?.();
   });
   return api;
 }
 
-export { num };
+/**
+ * Opens a form in a modal.
+ * fields: [{ k, label, type, required, full, hint, options, when, validate, warn, onChange, default }]
+ * type: text, email, tel, money, number, date, select, text-list, textarea, checkbox, segmented, payment, custom, section, note
+ * onSubmit(values, api): return false to keep the form open. api.setError(key, message) shows a message on a field.
+ */
+export function openForm({ title, intro, fields, values = {}, submitLabel = "Save", size = "", ctx, onSubmit, cancelLabel = "Cancel", footNote = null }) {
+  formCounter++;
+  let initial = "";
+  let api = null;
+  const m = openModal({
+    title, size, form: true,
+    body: formBody({ intro, fields, values, ctx }),
+    foot: html`
+      ${footNote !== null ? html`<span class="modal-foot-note" data-foot-note>${footNote}</span>` : ""}
+      <button type="button" class="btn" data-modal-close>${cancelLabel}</button>
+      <button type="submit" class="btn btn-primary">${submitLabel}</button>`,
+    isDirty: () => api && api.snapshot() !== initial,
+  });
+  api = wireForm(m.dialog, $("form", m.dialog), { fields, values, ctx, onSubmit, afterSubmit: () => m.close(), closeForm: () => m.close() });
+  initial = api.snapshot();
+  return api;
+}
+
+/** Places a form on a page instead of in a modal. actions is markup that sits beside the submit button. */
+export function mountForm(host, { intro, fields, values = {}, submitLabel = "Save", ctx, onSubmit, actions = "" }) {
+  formCounter++;
+  setHTML(host, html`
+    <form novalidate class="page-form">
+      ${formBody({ intro, fields, values, ctx })}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">${submitLabel}</button>
+        ${actions}
+      </div>
+    </form>`);
+  return wireForm(host, $("form", host), { fields, values, ctx, onSubmit });
+}

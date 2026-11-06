@@ -12,17 +12,19 @@ import { watchSystemTheme } from "./ui/theme.js";
 import { toast } from "./ui/toast.js";
 
 import dashboard from "./pages/dashboard.js";
+import { renderOnboarding } from "./pages/onboarding.js";
 import recycleBin from "./pages/recycle-bin.js";
+import settings from "./pages/settings.js";
 import styleguide from "./pages/styleguide.js";
 import { placeholder } from "./pages/placeholder.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide,
+  dashboard, recycleBin, styleguide, settings,
   placeholder("clients", "Clients", "building"), placeholder("invoices", "Invoices", "receipt"),
   placeholder("suppliers", "Suppliers", "truck"), placeholder("purchases", "Purchases", "cart"),
   placeholder("cashbook", "Cash book", "book"), placeholder("recurring", "Recurring", "repeat"), placeholder("banks", "Banks & loans", "bank"),
   placeholder("staff", "Staff", "users"), placeholder("attendance", "Attendance", "attendance"), placeholder("salary", "Salary sheet", "sheet"), placeholder("advances", "Advances", "wallet"),
-  placeholder("stock", "Stock", "box"), placeholder("reports", "Reports", "chart"), placeholder("settings", "Settings", "settings"),
+  placeholder("stock", "Stock", "box"), placeholder("reports", "Reports", "chart"),
 ].map((p) => [p.id, p]));
 
 const root = document.getElementById("app");
@@ -121,10 +123,21 @@ document.addEventListener("keydown", (e) => {
 
 watchSystemTheme();
 
+const hasRecords = (s) => s.staff.length || s.invoices.length || s.transactions.length || s.clients.length || s.accounts.length > 1;
+
 const result = store.boot();
 if (result.status === "rescue") {
   renderRescue(root, result);
 } else {
-  startApp();
   if (storage && navigator.storage?.persist) navigator.storage.persist().catch(() => {});
+  if (!store.isSample && !store.state.profile.onboarded) {
+    const notice = store.upgradeNotice();
+    renderOnboarding(root, ctx, {
+      upgraded: !!notice || !!hasRecords(store.state),
+      oldDataText: notice?.oldDataText,
+      onDone: () => { history.replaceState(null, "", "#/dashboard"); startApp(); },
+    });
+  } else {
+    startApp();
+  }
 }

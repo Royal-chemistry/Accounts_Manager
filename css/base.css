@@ -33,6 +33,8 @@ strong, b { font-weight: 600; }
 /* A clear focus ring on everything, for keyboard users. */
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+/* Headings get focus when a page opens, for screen readers. They aren't controls, so no ring. */
+[tabindex="-1"]:focus-visible { outline: none; }
 
 .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .muted { color: var(--text-muted); }

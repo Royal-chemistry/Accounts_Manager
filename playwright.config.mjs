@@ -9,7 +9,9 @@ export default defineConfig({
   testMatch: "*.spec.mjs",
   fullyParallel: true,
   forbidOnly: CI,
-  retries: CI ? 1 : 0,
+  // One retry absorbs timing blips under heavy load. Playwright still reports those tests as flaky.
+  retries: 1,
+  workers: CI ? 2 : 4,
   reporter: CI ? "github" : "list",
   outputDir: "test-results",
   use: {

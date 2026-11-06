@@ -82,10 +82,21 @@ export function createStore({ storage, now = () => new Date(), verify = verifyMi
         if (!check.ok) throw new MigrationError("verify", `The upgrade check found a difference: ${check.problems[0]}`);
         state = upgraded;
         const saved2 = store.save();
+        write(KEYS.notice, legacyKey);
         return { status: "upgraded", from: legacyKey, checked: check.checked, saved: saved2 };
       } catch (err) {
         return { status: "rescue", reason: err instanceof MigrationError ? err.message : "Your saved data couldn't be read.", raw: rawText, key: legacyKey };
       }
+    },
+
+    /** The old data's text, if an upgrade happened and its one-time notice hasn't been dismissed yet. */
+    upgradeNotice() {
+      const key = read(KEYS.notice);
+      return key ? { oldDataText: read(key) } : null;
+    },
+
+    clearUpgradeNotice() {
+      try { storage.removeItem(KEYS.notice); } catch { /* it will just show again */ }
     },
 
     save() {
