@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { daysInMonth, computePay, totals, inr, inWords, parseCSV, toCSV } from "../js/calc.js";
+import { daysInMonth, computePay, totals, inr, inWords, parseCSV, toCSV } from "../../js/calc.js";
 
 const base = { month: "2026-10", basis: "calendar", capAtFull: false, pf: false, esi: false };
 
@@ -72,7 +72,7 @@ test("CSV round trip", () => {
   assert.equal(rows[1].name, 'He said "hi"');
 });
 
-import { cashSummary } from "../js/calc.js";
+import { cashSummary } from "../../js/calc.js";
 test("cash book summary for a month", () => {
   const s = cashSummary([
     { date: "2026-10-03", type: "income", category: "Sales", amount: 50000 },
@@ -87,7 +87,7 @@ test("cash book summary for a month", () => {
   assert.equal(s.byCategory.Rent.expense, 20500);
 });
 
-import { invoiceTotals, bankBalances, nextDue } from "../js/calc.js";
+import { invoiceTotals, bankBalances, nextDue } from "../../js/calc.js";
 test("invoice totals with GST, TDS and part payment", () => {
   const inv = { items: [{ qty: 93, rate: 516.13 }], gst: true, gstRate: 18, payments: [{ amount: 56160, tds: 480 }] };
   const t = invoiceTotals({ items: [{ qty: 1, rate: 48000 }], gst: true, gstRate: 18, payments: [{ amount: 56160, tds: 480 }] });
