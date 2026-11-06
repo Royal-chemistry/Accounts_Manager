@@ -1,0 +1,22 @@
+{
+ "counts": {
+  "staff": 0,
+  "clients": 0,
+  "invoices": 0,
+  "cash": 0,
+  "advances": 0,
+  "banks": 0,
+  "transfers": 0,
+  "loans": 0,
+  "recurring": 0,
+  "salaryPayments": 0,
+  "invoicePayments": 0,
+  "loanPayments": 0
+ },
+ "balances": {},
+ "totalInAccounts": 0,
+ "invoices": {},
+ "owedByClients": 0,
+ "pay": {},
+ "profit": {}
+}

@@ -1,0 +1,611 @@
+{
+ "settings": {
+  "agency": "Sample Traders",
+  "address": "MG Road, Kochi, Kerala · GSTIN 32ABCDE1234F1Z5",
+  "month": "2026-10",
+  "basis": "calendar",
+  "capAtFull": false,
+  "pf": false,
+  "esi": false,
+  "specialRate": 500,
+  "messRate": 100,
+  "gstRate": 18,
+  "prefix": "ST-",
+  "nextInv": 5,
+  "bankLine": "Federal Bank A/c XXXXXX4521 · IFSC FDRL000XXXX · UPI sampletraders@upi"
+ },
+ "guards": [
+  {
+   "id": "g0",
+   "name": "Rajesh K",
+   "site": "Main shop",
+   "salary": 15500,
+   "bank": "State Bank of India",
+   "account": "XXXXXXXX1200",
+   "ifsc": "SBIN000XXXX",
+   "upi": "",
+   "phone": ""
+  },
+  {
+   "id": "g1",
+   "name": "Suresh P",
+   "site": "Main shop",
+   "salary": 15500,
+   "bank": "Federal Bank",
+   "account": "XXXXXXXX1237",
+   "ifsc": "FDRL000XXXX",
+   "upi": "",
+   "phone": ""
+  },
+  {
+   "id": "g2",
+   "name": "Anitha M",
+   "site": "Billing",
+   "salary": 14000,
+   "bank": "State Bank of India",
+   "account": "XXXXXXXX1274",
+   "ifsc": "SBIN000XXXX",
+   "upi": "",
+   "phone": ""
+  },
+  {
+   "id": "g3",
+   "name": "Biju Thomas",
+   "site": "Billing",
+   "salary": 14000,
+   "bank": "Federal Bank",
+   "account": "XXXXXXXX1311",
+   "ifsc": "FDRL000XXXX",
+   "upi": "",
+   "phone": ""
+  },
+  {
+   "id": "g4",
+   "name": "Manoj V",
+   "site": "Warehouse",
+   "salary": 15500,
+   "bank": "State Bank of India",
+   "account": "XXXXXXXX1348",
+   "ifsc": "SBIN000XXXX",
+   "upi": "",
+   "phone": ""
+  },
+  {
+   "id": "g5",
+   "name": "Sreeja R",
+   "site": "Warehouse",
+   "salary": 15500,
+   "bank": "Federal Bank",
+   "account": "XXXXXXXX1385",
+   "ifsc": "FDRL000XXXX",
+   "upi": "sreeja@upi",
+   "phone": ""
+  },
+  {
+   "id": "g6",
+   "name": "Vinod Kumar",
+   "site": "Delivery",
+   "salary": 20000,
+   "bank": "State Bank of India",
+   "account": "XXXXXXXX1422",
+   "ifsc": "SBIN000XXXX",
+   "upi": "",
+   "phone": ""
+  },
+  {
+   "id": "g7",
+   "name": "Joseph Mathew",
+   "site": "Delivery",
+   "salary": 20000,
+   "bank": "Federal Bank",
+   "account": "XXXXXXXX1459",
+   "ifsc": "FDRL000XXXX",
+   "upi": "",
+   "phone": ""
+  }
+ ],
+ "entries": {
+  "2026-10": {
+   "g0": {
+    "duties": 31,
+    "specialDuties": 2,
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": 26,
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   },
+   "g1": {
+    "duties": 30,
+    "specialDuties": "",
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": 30,
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   },
+   "g2": {
+    "duties": 26,
+    "specialDuties": "",
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": "",
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   },
+   "g3": {
+    "duties": 30,
+    "specialDuties": 1,
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": "",
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   },
+   "g4": {
+    "duties": 27,
+    "specialDuties": "",
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": "",
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   },
+   "g5": {
+    "duties": 20,
+    "specialDuties": "",
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": "",
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   },
+   "g6": {
+    "duties": 23,
+    "specialDuties": 3,
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": 23,
+    "messRate": 100,
+    "uniform": 1000,
+    "other": ""
+   },
+   "g7": {
+    "duties": 12,
+    "specialDuties": "",
+    "specialRate": 500,
+    "bonus": "",
+    "advance": "",
+    "messDays": 12,
+    "messRate": 100,
+    "uniform": "",
+    "other": ""
+   }
+  }
+ },
+ "cash": [
+  {
+   "id": "c0",
+   "date": "2026-10-02",
+   "type": "income",
+   "category": "Sales",
+   "note": "Week 1 counter sales",
+   "bankId": "b3",
+   "amount": 182000
+  },
+  {
+   "id": "c1",
+   "date": "2026-10-07",
+   "type": "expense",
+   "category": "Stock purchase",
+   "note": "Wholesale order",
+   "bankId": "b1",
+   "amount": 96000
+  },
+  {
+   "id": "c2",
+   "date": "2026-10-09",
+   "type": "income",
+   "category": "Sales",
+   "note": "Week 2 counter sales",
+   "bankId": "b1",
+   "amount": 171500
+  },
+  {
+   "id": "c3",
+   "date": "2026-10-16",
+   "type": "income",
+   "category": "Sales",
+   "note": "Week 3 counter sales",
+   "bankId": "b1",
+   "amount": 165200
+  },
+  {
+   "id": "c4",
+   "date": "2026-10-18",
+   "type": "expense",
+   "category": "Transport",
+   "note": "Diesel for van",
+   "bankId": "b3",
+   "amount": 9200
+  },
+  {
+   "id": "c5",
+   "date": "2026-10-23",
+   "type": "income",
+   "category": "Sales",
+   "note": "Week 4 counter sales",
+   "bankId": "b3",
+   "amount": 190300
+  },
+  {
+   "id": "c6",
+   "date": "2026-10-25",
+   "type": "expense",
+   "category": "Stock purchase",
+   "note": "Wholesale order",
+   "bankId": "b1",
+   "amount": 104000
+  },
+  {
+   "id": "rc0",
+   "date": "2026-10-05",
+   "type": "expense",
+   "category": "Rent",
+   "note": "Shop rent",
+   "bankId": "b1",
+   "amount": 35000,
+   "recurringId": "r0"
+  },
+  {
+   "id": "rc1",
+   "date": "2026-10-07",
+   "type": "expense",
+   "category": "Rent",
+   "note": "Godown rent",
+   "bankId": "b1",
+   "amount": 12000,
+   "recurringId": "r1"
+  },
+  {
+   "id": "rc2",
+   "date": "2026-10-12",
+   "type": "expense",
+   "category": "Electricity",
+   "note": "Electricity (avg)",
+   "bankId": "b1",
+   "amount": 6800,
+   "recurringId": "r2"
+  },
+  {
+   "id": "rc3",
+   "date": "2026-10-15",
+   "type": "expense",
+   "category": "Internet & phone",
+   "note": "Internet & phone",
+   "bankId": "b2",
+   "amount": 1499,
+   "recurringId": "r3"
+  }
+ ],
+ "advances": [
+  {
+   "id": "a0",
+   "staffId": "g0",
+   "date": "2026-10-08",
+   "amount": 2000,
+   "bankId": "b3",
+   "note": ""
+  },
+  {
+   "id": "a1",
+   "staffId": "g0",
+   "date": "2026-10-22",
+   "amount": 2000,
+   "bankId": "b1",
+   "note": ""
+  },
+  {
+   "id": "a2",
+   "staffId": "g2",
+   "date": "2026-10-15",
+   "amount": 2000,
+   "bankId": "b3",
+   "note": ""
+  },
+  {
+   "id": "a3",
+   "staffId": "g3",
+   "date": "2026-10-22",
+   "amount": 3000,
+   "bankId": "b1",
+   "note": ""
+  },
+  {
+   "id": "a4",
+   "staffId": "g4",
+   "date": "2026-10-10",
+   "amount": 5000,
+   "bankId": "b1",
+   "note": ""
+  },
+  {
+   "id": "a5",
+   "staffId": "g6",
+   "date": "2026-10-18",
+   "amount": 3000,
+   "bankId": "b1",
+   "note": ""
+  },
+  {
+   "id": "a6",
+   "staffId": "g7",
+   "date": "2026-10-05",
+   "amount": 6000,
+   "bankId": "b1",
+   "note": ""
+  }
+ ],
+ "salaryPaid": {
+  "2026-10": {
+   "g1": {
+    "date": "2026-11-02",
+    "bankId": "b1",
+    "amount": 12000
+   },
+   "g5": {
+    "date": "2026-11-02",
+    "bankId": "b1",
+    "amount": 10000
+   }
+  }
+ },
+ "clients": [
+  {
+   "id": "c1",
+   "name": "Harbour View Hotel",
+   "contact": "Anil (Purchase)",
+   "phone": "",
+   "email": "",
+   "gstin": "32AAACH0000A1Z1",
+   "address": "Marine Drive, Kochi",
+   "rate": 0,
+   "gst": true
+  },
+  {
+   "id": "c2",
+   "name": "St. Mary's School",
+   "contact": "Principal",
+   "phone": "",
+   "email": "",
+   "gstin": "",
+   "address": "Ernakulam",
+   "rate": 0,
+   "gst": false
+  },
+  {
+   "id": "c3",
+   "name": "Coastal Chemicals Pvt Ltd",
+   "contact": "Accounts",
+   "phone": "",
+   "email": "",
+   "gstin": "32AAECC0000B1Z2",
+   "address": "Eloor, Kochi",
+   "rate": 0,
+   "gst": true
+  }
+ ],
+ "invoices": [
+  {
+   "id": "i1",
+   "no": "ST-001",
+   "clientId": "c1",
+   "date": "2026-10-03",
+   "due": "2026-10-18",
+   "gst": true,
+   "gstRate": 18,
+   "items": [
+    {
+     "desc": "Bulk supply — September",
+     "qty": 1,
+     "rate": 86000
+    }
+   ],
+   "payments": [
+    {
+     "id": "p1",
+     "date": "2026-10-16",
+     "amount": 101480,
+     "tds": 0,
+     "bankId": "b1"
+    }
+   ]
+  },
+  {
+   "id": "i2",
+   "no": "ST-002",
+   "clientId": "c2",
+   "date": "2026-10-10",
+   "due": "2026-10-25",
+   "gst": false,
+   "gstRate": 18,
+   "items": [
+    {
+     "desc": "Stationery kits",
+     "qty": 120,
+     "rate": 240
+    }
+   ],
+   "payments": [
+    {
+     "id": "p2",
+     "date": "2026-10-28",
+     "amount": 15000,
+     "tds": 0,
+     "bankId": "b2"
+    }
+   ]
+  },
+  {
+   "id": "i3",
+   "no": "ST-003",
+   "clientId": "c3",
+   "date": "2026-10-20",
+   "due": "2026-11-04",
+   "gst": true,
+   "gstRate": 18,
+   "items": [
+    {
+     "desc": "Packing material",
+     "qty": 400,
+     "rate": 95
+    },
+    {
+     "desc": "Delivery charges",
+     "qty": 1,
+     "rate": 2500
+    }
+   ],
+   "payments": []
+  },
+  {
+   "id": "i4",
+   "no": "ST-004",
+   "clientId": "c1",
+   "date": "2026-10-31",
+   "due": "2026-11-15",
+   "gst": true,
+   "gstRate": 18,
+   "items": [
+    {
+     "desc": "Bulk supply — October",
+     "qty": 1,
+     "rate": 92000
+    }
+   ],
+   "payments": []
+  }
+ ],
+ "banks": [
+  {
+   "id": "b1",
+   "name": "Current account",
+   "accountNo": "XXXXXX4521",
+   "opening": 240000
+  },
+  {
+   "id": "b2",
+   "name": "Savings",
+   "accountNo": "XXXXXX8890",
+   "opening": 85000
+  },
+  {
+   "id": "b3",
+   "name": "Cash in hand",
+   "accountNo": "",
+   "opening": 12000
+  }
+ ],
+ "transfers": [
+  {
+   "id": "t1",
+   "date": "2026-10-24",
+   "from": "b3",
+   "to": "b1",
+   "amount": 150000,
+   "note": "Cash deposit"
+  }
+ ],
+ "loans": [
+  {
+   "id": "l1",
+   "name": "Delivery van loan",
+   "lender": "HDFC Bank",
+   "emi": 18500,
+   "dueDay": 10,
+   "outstanding": 412000,
+   "since": "2026-10-01",
+   "payments": [
+    {
+     "id": "lp1",
+     "date": "2026-10-10",
+     "amount": 18500,
+     "bankId": "b1"
+    }
+   ]
+  }
+ ],
+ "recurring": [
+  {
+   "id": "r0",
+   "name": "Shop rent",
+   "category": "Rent",
+   "amount": 35000,
+   "dueDay": 5,
+   "bankId": "b1",
+   "note": "",
+   "paid": {
+    "2026-10": "rc0"
+   }
+  },
+  {
+   "id": "r1",
+   "name": "Godown rent",
+   "category": "Rent",
+   "amount": 12000,
+   "dueDay": 7,
+   "bankId": "b1",
+   "note": "",
+   "paid": {
+    "2026-10": "rc1"
+   }
+  },
+  {
+   "id": "r2",
+   "name": "Electricity (avg)",
+   "category": "Electricity",
+   "amount": 6800,
+   "dueDay": 12,
+   "bankId": "b1",
+   "note": "",
+   "paid": {
+    "2026-10": "rc2"
+   }
+  },
+  {
+   "id": "r3",
+   "name": "Internet & phone",
+   "category": "Internet & phone",
+   "amount": 1499,
+   "dueDay": 15,
+   "bankId": "b2",
+   "note": "",
+   "paid": {
+    "2026-10": "rc3"
+   }
+  },
+  {
+   "id": "r4",
+   "name": "Accounting software",
+   "category": "Subscriptions",
+   "amount": 999,
+   "dueDay": 20,
+   "bankId": "b2",
+   "note": "",
+   "paid": {}
+  }
+ ]
+}

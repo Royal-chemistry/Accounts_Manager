@@ -1,0 +1,8 @@
+{
+ "settings": { "agency": "Unsafe", "month": "2026-10" },
+ "guards": [ { "id": "g\"><img src=x onerror=alert(1)>", "name": "Unsafe id", "salary": 1000 } ],
+ "entries": { "2026-10": { "g\"><img src=x onerror=alert(1)>": { "duties": 30 } } },
+ "banks": [ { "id": "b\"><script>alert(2)</script>", "name": "Unsafe bank", "opening": 100 } ],
+ "advances": [ { "id": "a\"'", "staffId": "g\"><img src=x onerror=alert(1)>", "date": "2026-10-01", "amount": 50, "bankId": "b\"><script>alert(2)</script>" } ],
+ "cash": [ { "id": "k\"", "date": "2026-10-01", "type": "income", "category": "Sales", "bankId": "b\"><script>alert(2)</script>", "amount": 20 } ]
+}

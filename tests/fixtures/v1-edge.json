@@ -1,0 +1,68 @@
+{
+ "settings": { "agency": "Edge Case & Sons <Pvt> Ltd", "address": "12 Lake Road, Kochi · GSTIN 32AAAAA0000A1Z5", "month": "2026-10", "basis": "30", "capAtFull": true, "pf": true, "esi": true, "specialRate": "500", "gstRate": "18", "prefix": "EC-", "nextInv": 7 },
+ "guards": [
+  { "id": "s1", "name": "Numeric String Salary", "site": "North", "salary": "15000" },
+  { "id": "s2", "name": "Empty Salary", "site": "", "salary": "" },
+  { "id": "s3", "name": "<b>Markup</b> Name", "site": "North", "salary": 21000, "bank": "SBI", "account": "123", "ifsc": "SBIN0001234", "upi": "x@upi", "phone": "9800000000" },
+  { "id": "s4", "name": "Owes Money", "site": "South", "salary": 9000 },
+  { "id": "s5", "name": "", "salary": 12000.75 }
+ ],
+ "entries": {
+  "2026-10": {
+   "s1": { "duties": "26", "specialDuties": "2", "specialRate": "500", "bonus": "1000", "advance": "", "messDays": "", "messRate": 100, "uniform": "", "other": "" },
+   "s2": { "duties": 30 },
+   "s3": { "duties": 31, "specialDuties": 1, "specialRate": 800, "bonus": "", "advance": 500, "messDays": 20, "messRate": 90, "uniform": 750, "other": 100.5 },
+   "s4": { "duties": 2, "advance": 4000 },
+   "ghost": { "duties": 12 }
+  },
+  "2026-09": { "s1": { "duties": 30 }, "s3": { "duties": 15.5, "bonus": 200.4 } },
+  "2026-11": { "s1": {} }
+ },
+ "advances": [
+  { "id": "a1", "staffId": "s1", "date": "2026-10-05", "amount": "1500", "bankId": "bank2" },
+  { "id": "a2", "staffId": "ghost", "date": "2026-10-06", "amount": 700, "bankId": "", "note": "Staff removed later" },
+  { "id": "a3", "staffId": "s4", "date": "2026-09-30", "amount": 300, "bankId": "missing-bank" },
+  { "id": "a4", "staffId": "s3", "date": "2026-10-20", "amount": 0, "bankId": "bank1" }
+ ],
+ "salaryPaid": {
+  "2026-09": { "s1": { "date": "2026-10-02", "bankId": "bank1", "amount": 15000 }, "ghost": { "date": "2026-10-02", "bankId": "bank2", "amount": 8000 } },
+  "2026-10": { "s3": { "date": "2026-11-02", "bankId": "", "amount": 19000 } }
+ },
+ "clients": [
+  { "id": "c1", "name": "Tax Client", "gstin": "32AAACH0000A1Z1", "gst": true },
+  { "id": "c2", "name": "No Fields" }
+ ],
+ "invoices": [
+  { "id": "i1", "no": "EC-001", "clientId": "c1", "date": "2026-10-01", "due": "2026-10-15", "gst": true, "gstRate": "18", "items": [{ "desc": "Thing", "qty": "3", "rate": "333.33" }], "payments": [{ "id": "p1", "date": "2026-10-10", "amount": "1000", "tds": "50", "bankId": "bank1" }] },
+  { "id": "i2", "no": "EC-002", "clientId": "removed-client", "date": "2026-10-02", "due": "", "gst": false, "gstRate": 18, "items": [{ "desc": "Overpaid", "qty": 1, "rate": 100 }], "payments": [{ "id": "p2", "date": "2026-10-03", "amount": 150, "bankId": "" }] },
+  { "id": "i3", "no": "EC-003", "clientId": "c2", "date": "2026-09-30", "gst": true, "gstRate": 5, "items": [] },
+  { "id": "i4", "no": "EC-003", "clientId": "c1", "date": "2026-10-09", "gst": true, "gstRate": 12, "items": [{ "desc": "Rounding", "qty": 7, "rate": 1.07 }, { "qty": 2.5, "rate": 99.99 }], "payments": [{ "id": "p3", "date": "2026-10-09", "amount": 300, "tds": 0, "bankId": "missing-bank" }] },
+  { "id": "i5", "no": "EC-005", "clientId": "c1", "date": "2026-10-11", "gst": true, "gstRate": 18, "items": [{ "desc": "Within tolerance", "qty": 1, "rate": 100 }], "payments": [{ "id": "p4", "date": "2026-10-12", "amount": 117.6, "bankId": "bank1" }] }
+ ],
+ "banks": [
+  { "id": "bank1", "name": "SBI current", "accountNo": "XXXX1", "opening": "1000.50" },
+  { "id": "bank2", "name": "Cash in hand", "opening": 250 },
+  { "id": "bank3", "name": "No opening" }
+ ],
+ "cash": [
+  { "id": "k1", "date": "2026-10-01", "type": "income", "category": "Sales", "note": "Linked", "bankId": "bank1", "amount": "2500.25" },
+  { "id": "k2", "date": "2026-10-02", "category": "No type means expense", "bankId": "bank2", "amount": 100 },
+  { "id": "k3", "date": "2026-10-03", "type": "expense", "category": "", "note": "Not linked", "bankId": "", "amount": 75 },
+  { "id": "k4", "date": "2026-10-04", "type": "expense", "category": "Rent", "bankId": "missing-bank", "amount": 900 },
+  { "id": "k5", "date": "2026-10-05", "type": "expense", "category": "Rent", "note": "From recurring", "bankId": "bank1", "amount": 500, "recurringId": "r1" },
+  { "id": "k6", "date": "2026-10-06", "type": "income", "category": "=SUM(A1:A9)", "note": "Formula looking", "bankId": "", "amount": 10 }
+ ],
+ "transfers": [
+  { "id": "t1", "date": "2026-10-07", "from": "bank1", "to": "bank2", "amount": "200" },
+  { "id": "t2", "date": "2026-10-08", "from": "bank2", "to": "missing-bank", "amount": 50 }
+ ],
+ "loans": [
+  { "id": "l1", "name": "Has payments", "lender": "Bank", "emi": 1000, "dueDay": 10, "outstanding": 50000, "since": "2026-10-01", "payments": [{ "id": "lp1", "date": "2026-10-10", "amount": 1000, "bankId": "bank1" }, { "id": "lp2", "date": "2026-09-10", "amount": 1000, "bankId": "" }] },
+  { "id": "l2", "name": "Never paid", "emi": "", "outstanding": "1000" }
+ ],
+ "recurring": [
+  { "id": "r1", "name": "Rent", "category": "Rent", "amount": 500, "dueDay": "5", "bankId": "bank1", "paid": { "2026-10": "k5" } },
+  { "id": "r2", "name": "No paid map", "amount": "99", "dueDay": 31 },
+  { "id": "r3", "name": "Dangling paid", "amount": 10, "dueDay": 1, "paid": { "2026-09": "gone" } }
+ ]
+}

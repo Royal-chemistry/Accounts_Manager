@@ -1,0 +1,50 @@
+{
+ "counts": {
+  "staff": 1,
+  "clients": 0,
+  "invoices": 0,
+  "cash": 0,
+  "advances": 0,
+  "banks": 0,
+  "transfers": 0,
+  "loans": 0,
+  "recurring": 0,
+  "salaryPayments": 0,
+  "invoicePayments": 0,
+  "loanPayments": 0
+ },
+ "balances": {},
+ "totalInAccounts": 0,
+ "invoices": {},
+ "owedByClients": 0,
+ "pay": {
+  "2026-10": {
+   "d1": {
+    "divisor": 31,
+    "rate": 451.61,
+    "duties": 30,
+    "base": 13548,
+    "special": 1600,
+    "bonus": 0,
+    "gross": 15148,
+    "advance": 3000,
+    "mess": 2800,
+    "uniform": 0,
+    "other": 0,
+    "pf": 0,
+    "esi": 0,
+    "deductions": 5800,
+    "net": 9348,
+    "owesAgency": false
+   }
+  }
+ },
+ "profit": {
+  "2026-10": {
+   "income": 0,
+   "expense": 0,
+   "salaries": 12348,
+   "profit": -12348
+  }
+ }
+}
