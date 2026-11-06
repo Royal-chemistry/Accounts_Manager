@@ -1,4 +1,4 @@
-// DutyPay — pure calculation functions (no DOM). Shared by the app and the tests.
+// Accounts Manager — pure calculation functions (no DOM). Shared by the app and the tests.
 
 /** Number of days in a "YYYY-MM" month. */
 export function daysInMonth(ym) {
@@ -145,4 +145,21 @@ export function toCSV(rows) {
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     }).join(","))
     .join("\r\n");
+}
+
+/**
+ * Cash book summary for one month.
+ * entries: [{ date: "YYYY-MM-DD", type: "income"|"expense", category, amount }]
+ */
+export function cashSummary(entries, month) {
+  const inMonth = entries.filter((e) => String(e.date || "").startsWith(month));
+  const income = inMonth.filter((e) => e.type === "income").reduce((s, e) => s + num(e.amount), 0);
+  const expense = inMonth.filter((e) => e.type !== "income").reduce((s, e) => s + num(e.amount), 0);
+  const byCategory = {};
+  for (const e of inMonth) {
+    const k = (e.category || "Other").trim() || "Other";
+    byCategory[k] ??= { income: 0, expense: 0 };
+    byCategory[k][e.type === "income" ? "income" : "expense"] += num(e.amount);
+  }
+  return { count: inMonth.length, income, expense, net: income - expense, byCategory };
 }

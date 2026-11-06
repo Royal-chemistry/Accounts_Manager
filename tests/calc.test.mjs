@@ -71,3 +71,18 @@ test("CSV round trip", () => {
   assert.equal(rows[1].site, "A, B");
   assert.equal(rows[1].name, 'He said "hi"');
 });
+
+import { cashSummary } from "../js/calc.js";
+test("cash book summary for a month", () => {
+  const s = cashSummary([
+    { date: "2026-10-03", type: "income", category: "Sales", amount: 50000 },
+    { date: "2026-10-05", type: "expense", category: "Rent", amount: 20000 },
+    { date: "2026-10-20", type: "expense", category: "Rent", amount: 500 },
+    { date: "2026-11-01", type: "income", category: "Sales", amount: 999 },
+  ], "2026-10");
+  assert.equal(s.count, 3);
+  assert.equal(s.income, 50000);
+  assert.equal(s.expense, 20500);
+  assert.equal(s.net, 29500);
+  assert.equal(s.byCategory.Rent.expense, 20500);
+});

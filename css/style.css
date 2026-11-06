@@ -127,3 +127,13 @@ tfoot td { font-weight: 700; background: #fff6dd; border-top: 2px solid #f0dfaa;
   td.name { min-width: 120px; }
 }
 .tagline { font-weight: 500; color: #b9c3dc; font-size: 15px; } @media (max-width: 640px) { .tagline { display: none; } }
+
+/* cash book */
+.cash-form { display: grid; grid-template-columns: 150px 130px 1fr 1.4fr 140px 140px auto; gap: 10px; align-items: end; margin-bottom: 14px; }
+.cash-form .btn { height: 42px; }
+@media (max-width: 900px) { .cash-form { grid-template-columns: 1fr 1fr; } .cash-form .wide { grid-column: span 2; } .cash-form .btn { grid-column: span 2; } }
+td.inc { color: var(--green); font-weight: 600; text-align: right; }
+td.exp { color: var(--red); font-weight: 600; text-align: right; }
+.stat.good b { color: #7ee2b8; }
+.stat.bad b { color: #ff9b9b; }
+.cash-form label { min-width: 0; } .cash-form input, .cash-form select { width: 100%; min-width: 0; }

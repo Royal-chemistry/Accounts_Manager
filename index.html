@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DutyPay</title>
-  <meta name="description" content="Free payroll for small security agencies: duty register to salary sheet, payslips and bank/UPI payout list. Runs fully in your browser.">
+  <title>Accounts Manager</title>
+  <meta name="description" content="Free accounts and payroll for small businesses: staff attendance to salary sheet, payslips, bank/UPI payout list and a simple cash book. Runs fully in your browser.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="top">
     <div class="wrap top-inner">
       <div class="brand">
-        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7L16 2z" fill="currentColor"/><path d="m11 16 3.5 3.5L21.5 12" fill="none" stroke="#14213d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="4" width="26" height="24" rx="5" fill="currentColor"/><path d="M9 21v-4M14 21v-8M19 21v-6M24 21V10" stroke="#14213d" stroke-width="2.8" stroke-linecap="round"/></svg>
         <div>
-          <h1>DutyPay <span class="tagline">· payroll for security guards</span></h1>
-          <p class="sub">Duty register → salary sheet, payslips and payout list. Everything stays in this browser.</p>
+          <h1>Accounts Manager <span class="tagline">· payroll &amp; cash book for small businesses</span></h1>
+          <p class="sub">Attendance → salary sheet, payslips, payout list and monthly accounts. Everything stays in this browser.</p>
         </div>
       </div>
       <div class="toolbar">
@@ -26,9 +26,10 @@
     </div>
     <nav class="wrap tabs" role="tablist">
       <button class="tab active" data-tab="settings" role="tab">1 · Settings</button>
-      <button class="tab" data-tab="guards" role="tab">2 · Guards <span class="count" id="count-guards">0</span></button>
-      <button class="tab" data-tab="register" role="tab">3 · Duty register</button>
+      <button class="tab" data-tab="guards" role="tab">2 · Staff <span class="count" id="count-guards">0</span></button>
+      <button class="tab" data-tab="register" role="tab">3 · Attendance &amp; pay</button>
       <button class="tab" data-tab="sheet" role="tab">4 · Salary sheet</button>
+      <button class="tab" data-tab="cash" role="tab">5 · Cash book</button>
     </nav>
   </header>
 
@@ -36,11 +37,11 @@
     <!-- SETTINGS -->
     <section id="tab-settings" class="panel active">
       <div class="card">
-        <h2>Agency &amp; month</h2>
+        <h2>Business &amp; month</h2>
         <div class="grid">
-          <label>Agency name<input id="s-agency" placeholder="e.g. Tats Force Security"></label>
+          <label>Business name<input id="s-agency" placeholder="e.g. Sunrise Bakery"></label>
           <label>Address / GSTIN (shown on payslips)<input id="s-address" placeholder="Kochi, Kerala"></label>
-          <label>Salary month<input type="month" id="s-month"></label>
+          <label>Month<input type="month" id="s-month"></label>
           <label>Pay basis
             <select id="s-basis">
               <option value="calendar">Salary ÷ days in that month</option>
@@ -48,11 +49,11 @@
               <option value="26">Salary ÷ 26 (6-day week)</option>
             </select>
           </label>
-          <label>Default special duty rate (₹)<input type="number" id="s-special" min="0" step="50"></label>
-          <label>Default mess rate per day (₹)<input type="number" id="s-mess" min="0" step="5"></label>
+          <label>Default extra shift rate (₹)<input type="number" id="s-special" min="0" step="50"></label>
+          <label>Default food rate per day (₹)<input type="number" id="s-mess" min="0" step="5"></label>
         </div>
         <div class="checks">
-          <label class="check"><input type="checkbox" id="s-cap"> Never pay more than the monthly salary for normal duties</label>
+          <label class="check"><input type="checkbox" id="s-cap"> Never pay more than the monthly salary for normal days</label>
           <label class="check"><input type="checkbox" id="s-pf"> Deduct PF (12% of basic, up to ₹15,000 wage)</label>
           <label class="check"><input type="checkbox" id="s-esi"> Deduct ESI (0.75% when gross ≤ ₹21,000)</label>
         </div>
@@ -61,45 +62,46 @@
       <div class="card soft">
         <h2>How it works</h2>
         <ol class="steps">
-          <li><b>Add your guards</b> once: name, site, monthly salary and bank/UPI details. Or import a CSV.</li>
-          <li><b>Each month</b>, fill the duty register: duties, special duties, advances, mess days, uniform cuts.</li>
-          <li><b>Get the salary sheet</b>: net pay for every guard, site totals, printable payslips and a payout list for your bank.</li>
+          <li><b>Add your staff</b> once: name, team or branch, monthly salary and bank/UPI details. Or import a CSV.</li>
+          <li><b>Each month</b>, enter days worked, extra shifts, advances, food and other cuts.</li>
+          <li><b>Get the salary sheet</b>: net pay for everyone, team totals, printable payslips and a payout list for your bank.</li>
+          <li><b>Keep a cash book</b> of income and expenses. Salaries are added in automatically, so you see your real profit for the month.</li>
         </ol>
-        <p class="hint">Nothing is uploaded anywhere. Use <b>Backup</b> to save a file you can restore on another device.</p>
+        <p class="hint">Works for shops, restaurants, clinics, construction crews, cleaning and security agencies — anyone paying staff by days or shifts. Nothing is uploaded anywhere; use <b>Backup</b> to move your data to another device.</p>
       </div>
     </section>
 
-    <!-- GUARDS -->
+    <!-- STAFF -->
     <section id="tab-guards" class="panel">
       <div class="card">
         <div class="card-head">
-          <h2>Guards</h2>
+          <h2>Staff</h2>
           <div class="actions">
             <label class="btn ghost file">Import CSV<input type="file" id="file-guards" accept=".csv,text/csv" hidden></label>
             <button class="btn ghost" id="btn-guards-template">CSV template</button>
-            <button class="btn" id="btn-add-guard">+ Add guard</button>
+            <button class="btn" id="btn-add-guard">+ Add staff</button>
           </div>
         </div>
         <div class="table-wrap">
           <table class="edit" id="guards-table">
             <thead><tr>
-              <th>Name</th><th>Site</th><th class="n">Monthly salary ₹</th><th>Bank</th><th>Account no.</th><th>IFSC</th><th>UPI ID</th><th>Phone</th><th></th>
+              <th>Name</th><th>Team / branch / site</th><th class="n">Monthly salary ₹</th><th>Bank</th><th>Account no.</th><th>IFSC</th><th>UPI ID</th><th>Phone</th><th></th>
             </tr></thead>
             <tbody></tbody>
           </table>
         </div>
-        <p class="empty" id="guards-empty">No guards yet. Add one, import a CSV, or click <b>Load sample data</b> to try it.</p>
+        <p class="empty" id="guards-empty">No staff yet. Add someone, import a CSV, or click <b>Load sample data</b> to try it.</p>
       </div>
     </section>
 
-    <!-- REGISTER -->
+    <!-- ATTENDANCE & PAY -->
     <section id="tab-register" class="panel">
       <div class="card">
         <div class="card-head">
-          <h2>Duty register · <span id="reg-month"></span></h2>
+          <h2>Attendance &amp; pay · <span id="reg-month"></span></h2>
           <div class="actions">
-            <label class="inline">Site
-              <select id="reg-site"><option value="">All sites</option></select>
+            <label class="inline">Team
+              <select id="reg-site"><option value="">All teams</option></select>
             </label>
             <button class="btn ghost" id="btn-fill-full">Fill full month</button>
           </div>
@@ -107,13 +109,13 @@
         <div class="table-wrap">
           <table class="edit" id="reg-table">
             <thead><tr>
-              <th>Guard</th><th class="n">Duties</th><th class="n">Special duties</th><th class="n">Special rate ₹</th><th class="n">Bonus ₹</th>
-              <th class="n">Advance ₹</th><th class="n">Mess days</th><th class="n">Mess rate ₹</th><th class="n">Uniform ₹</th><th class="n">Other cut ₹</th><th class="n">Net pay</th>
+              <th>Staff</th><th class="n">Days worked</th><th class="n">Extra shifts</th><th class="n">Shift rate ₹</th><th class="n">Bonus ₹</th>
+              <th class="n">Advance ₹</th><th class="n">Food days</th><th class="n">Food rate ₹</th><th class="n">Uniform / kit ₹</th><th class="n">Other cut ₹</th><th class="n">Net pay</th>
             </tr></thead>
             <tbody></tbody>
           </table>
         </div>
-        <p class="empty" id="reg-empty">Add guards first.</p>
+        <p class="empty" id="reg-empty">Add staff first.</p>
       </div>
     </section>
 
@@ -133,8 +135,8 @@
         <div class="table-wrap">
           <table class="sheet" id="sheet-table">
             <thead><tr>
-              <th>Guard</th><th>Site</th><th class="n">Duties</th><th class="n">Earned</th><th class="n">Special</th><th class="n">Bonus</th><th class="n">Gross</th>
-              <th class="n">Advance</th><th class="n">Mess</th><th class="n">Uniform</th><th class="n">Other</th><th class="n">PF</th><th class="n">ESI</th><th class="n">Net pay</th>
+              <th>Staff</th><th>Team</th><th class="n">Days</th><th class="n">Earned</th><th class="n">Extra</th><th class="n">Bonus</th><th class="n">Gross</th>
+              <th class="n">Advance</th><th class="n">Food</th><th class="n">Uniform</th><th class="n">Other</th><th class="n">PF</th><th class="n">ESI</th><th class="n">Net pay</th>
             </tr></thead>
             <tbody></tbody>
             <tfoot></tfoot>
@@ -143,14 +145,51 @@
         <p class="hint" id="sheet-note"></p>
       </div>
       <div class="card">
-        <h2>By site</h2>
+        <h2>By team</h2>
         <div class="sites" id="sites"></div>
+      </div>
+    </section>
+
+    <!-- CASH BOOK -->
+    <section id="tab-cash" class="panel">
+      <div class="stats" id="cash-stats"></div>
+      <div class="card">
+        <div class="card-head">
+          <h2>Cash book · <span id="cash-month"></span></h2>
+          <div class="actions">
+            <button class="btn ghost" id="btn-cash-csv">Cash book CSV</button>
+          </div>
+        </div>
+        <form class="cash-form" id="cash-form">
+          <label>Date<input type="date" id="c-date" required></label>
+          <label>Type
+            <select id="c-type"><option value="expense">Expense</option><option value="income">Income</option></select>
+          </label>
+          <label>Category<input id="c-cat" list="cat-list" placeholder="Rent, Sales, Electricity…" required></label>
+          <label class="wide">Note<input id="c-note" placeholder="Optional"></label>
+          <label>Paid via<input id="c-via" list="via-list" placeholder="Cash, UPI, Bank…"></label>
+          <label>Amount ₹<input type="number" id="c-amount" min="0" step="0.01" required></label>
+          <button class="btn" type="submit">+ Add</button>
+          <datalist id="cat-list"></datalist>
+          <datalist id="via-list"><option>Cash</option><option>UPI</option><option>Bank transfer</option><option>Card</option><option>Cheque</option></datalist>
+        </form>
+        <div class="table-wrap">
+          <table class="sheet" id="cash-table">
+            <thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Paid via</th><th class="n">Income</th><th class="n">Expense</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint">Salaries for this month (from the salary sheet) are counted automatically in the profit above — don't add them here again.</p>
+      </div>
+      <div class="card">
+        <h2>By category</h2>
+        <div class="sites" id="cash-cats"></div>
       </div>
     </section>
   </main>
 
   <footer class="wrap foot">
-    Open source · MIT licence · <a href="https://github.com/Royal-chemistry/dutypay">GitHub</a>
+    Open source · MIT licence · <a href="https://github.com/Royal-chemistry/Accounts_Manager">GitHub</a>
   </footer>
 
   <div id="print-area" aria-hidden="true"></div>
