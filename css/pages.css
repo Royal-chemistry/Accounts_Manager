@@ -1,0 +1,13 @@
+/* Layout that belongs to one page. */
+
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--s-2); }
+.swatch { padding: var(--s-3); border: 1px solid var(--border); border-radius: var(--r-2); font-size: var(--fs-12); font-weight: 600; }
+.swatch-bg { background: var(--bg); }
+.swatch-surface { background: var(--surface); }
+.swatch-surface-2 { background: var(--surface-2); }
+.swatch-primary { background: var(--primary); color: var(--on-primary); }
+.swatch-primary-soft { background: var(--primary-soft); color: var(--primary-text); }
+.swatch-success { background: var(--success-soft); color: var(--success); }
+.swatch-danger { background: var(--danger-soft); color: var(--danger); }
+.swatch-warning { background: var(--warning-soft); color: var(--warning); }
+.swatch-info { background: var(--info-soft); color: var(--info); }

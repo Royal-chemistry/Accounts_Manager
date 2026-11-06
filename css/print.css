@@ -1,0 +1,10 @@
+/* Print and Save as PDF. Always a light page with no app chrome. */
+#print-root { display: none; }
+
+@media print {
+  @page { size: A4; margin: 14mm 12mm; }
+  :root { color-scheme: light; }
+  html, body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
+  body > *:not(#print-root) { display: none !important; }
+  #print-root { display: block; }
+}
