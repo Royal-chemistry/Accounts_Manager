@@ -31,7 +31,8 @@ export function watchPage(page, { allowHosts = [], ignore = [] } = {}) {
   const report = (text) => { if (!isNoise(text)) problems.push(text); };
   page.on("console", (m) => { if (m.type() === "error") report(`console error: ${m.text()} (${m.location().url})`); });
   page.on("pageerror", (e) => report(`uncaught error: ${e.message}`));
-  page.on("requestfailed", (r) => { if (!allowed(r.url())) report(`request failed: ${r.url()}`); });
+  // A request cancelled because the page moved on isn't a failure.
+  page.on("requestfailed", (r) => { if (!allowed(r.url()) && r.failure()?.errorText !== "net::ERR_ABORTED") report(`request failed: ${r.url()} (${r.failure()?.errorText})`); });
   page.on("response", (r) => { if (r.status() >= 400 && !allowed(r.url())) report(`HTTP ${r.status()}: ${r.url()}`); });
   page.on("request", (r) => { if (!isLocal(r.url()) && !allowed(r.url())) report(`third-party request: ${r.url()}`); });
   return problems;

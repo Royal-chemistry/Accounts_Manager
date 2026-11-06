@@ -8,6 +8,7 @@ test("an existing v1 user lands on their data with every figure intact, and the 
   const v1 = fixture("v1-sample");
   await seed(page, { v1 });
   await page.goto("/index.html");
+  await page.getByRole("button", { name: "Skip for now" }).click();
   const kpis = page.locator(".kpis");
   await expect(kpis).toContainText("₹8,34,481");
   await expect(kpis).toContainText("₹1,70,150");
