@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DutyPay</title>
+  <meta name="description" content="Free payroll for small security agencies: duty register to salary sheet, payslips and bank/UPI payout list. Runs fully in your browser.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7L16 2z" fill="currentColor"/><path d="m11 16 3.5 3.5L21.5 12" fill="none" stroke="#14213d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+          <h1>DutyPay <span class="tagline">· payroll for security guards</span></h1>
+          <p class="sub">Duty register → salary sheet, payslips and payout list. Everything stays in this browser.</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn ghost" id="btn-sample">Load sample data</button>
+        <button class="btn ghost" id="btn-backup">Backup</button>
+        <label class="btn ghost file">Restore<input type="file" id="file-restore" accept=".json" hidden></label>
+        <button class="btn ghost danger" id="btn-clear">Clear all</button>
+      </div>
+    </div>
+    <nav class="wrap tabs" role="tablist">
+      <button class="tab active" data-tab="settings" role="tab">1 · Settings</button>
+      <button class="tab" data-tab="guards" role="tab">2 · Guards <span class="count" id="count-guards">0</span></button>
+      <button class="tab" data-tab="register" role="tab">3 · Duty register</button>
+      <button class="tab" data-tab="sheet" role="tab">4 · Salary sheet</button>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <!-- SETTINGS -->
+    <section id="tab-settings" class="panel active">
+      <div class="card">
+        <h2>Agency &amp; month</h2>
+        <div class="grid">
+          <label>Agency name<input id="s-agency" placeholder="e.g. Tats Force Security"></label>
+          <label>Address / GSTIN (shown on payslips)<input id="s-address" placeholder="Kochi, Kerala"></label>
+          <label>Salary month<input type="month" id="s-month"></label>
+          <label>Pay basis
+            <select id="s-basis">
+              <option value="calendar">Salary ÷ days in that month</option>
+              <option value="30">Salary ÷ 30</option>
+              <option value="26">Salary ÷ 26 (6-day week)</option>
+            </select>
+          </label>
+          <label>Default special duty rate (₹)<input type="number" id="s-special" min="0" step="50"></label>
+          <label>Default mess rate per day (₹)<input type="number" id="s-mess" min="0" step="5"></label>
+        </div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="s-cap"> Never pay more than the monthly salary for normal duties</label>
+          <label class="check"><input type="checkbox" id="s-pf"> Deduct PF (12% of basic, up to ₹15,000 wage)</label>
+          <label class="check"><input type="checkbox" id="s-esi"> Deduct ESI (0.75% when gross ≤ ₹21,000)</label>
+        </div>
+        <p class="hint" id="basis-hint"></p>
+      </div>
+      <div class="card soft">
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li><b>Add your guards</b> once: name, site, monthly salary and bank/UPI details. Or import a CSV.</li>
+          <li><b>Each month</b>, fill the duty register: duties, special duties, advances, mess days, uniform cuts.</li>
+          <li><b>Get the salary sheet</b>: net pay for every guard, site totals, printable payslips and a payout list for your bank.</li>
+        </ol>
+        <p class="hint">Nothing is uploaded anywhere. Use <b>Backup</b> to save a file you can restore on another device.</p>
+      </div>
+    </section>
+
+    <!-- GUARDS -->
+    <section id="tab-guards" class="panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>Guards</h2>
+          <div class="actions">
+            <label class="btn ghost file">Import CSV<input type="file" id="file-guards" accept=".csv,text/csv" hidden></label>
+            <button class="btn ghost" id="btn-guards-template">CSV template</button>
+            <button class="btn" id="btn-add-guard">+ Add guard</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="edit" id="guards-table">
+            <thead><tr>
+              <th>Name</th><th>Site</th><th class="n">Monthly salary ₹</th><th>Bank</th><th>Account no.</th><th>IFSC</th><th>UPI ID</th><th>Phone</th><th></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="empty" id="guards-empty">No guards yet. Add one, import a CSV, or click <b>Load sample data</b> to try it.</p>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section id="tab-register" class="panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>Duty register · <span id="reg-month"></span></h2>
+          <div class="actions">
+            <label class="inline">Site
+              <select id="reg-site"><option value="">All sites</option></select>
+            </label>
+            <button class="btn ghost" id="btn-fill-full">Fill full month</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="edit" id="reg-table">
+            <thead><tr>
+              <th>Guard</th><th class="n">Duties</th><th class="n">Special duties</th><th class="n">Special rate ₹</th><th class="n">Bonus ₹</th>
+              <th class="n">Advance ₹</th><th class="n">Mess days</th><th class="n">Mess rate ₹</th><th class="n">Uniform ₹</th><th class="n">Other cut ₹</th><th class="n">Net pay</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="empty" id="reg-empty">Add guards first.</p>
+      </div>
+    </section>
+
+    <!-- SHEET -->
+    <section id="tab-sheet" class="panel">
+      <div class="stats" id="stats"></div>
+      <div class="card">
+        <div class="card-head">
+          <h2>Salary sheet · <span id="sheet-month"></span></h2>
+          <div class="actions">
+            <button class="btn ghost" id="btn-csv">Salary sheet CSV</button>
+            <button class="btn ghost" id="btn-payout">Payout list CSV</button>
+            <button class="btn ghost" id="btn-whatsapp">Copy WhatsApp summary</button>
+            <button class="btn" id="btn-print">Print payslips</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="sheet" id="sheet-table">
+            <thead><tr>
+              <th>Guard</th><th>Site</th><th class="n">Duties</th><th class="n">Earned</th><th class="n">Special</th><th class="n">Bonus</th><th class="n">Gross</th>
+              <th class="n">Advance</th><th class="n">Mess</th><th class="n">Uniform</th><th class="n">Other</th><th class="n">PF</th><th class="n">ESI</th><th class="n">Net pay</th>
+            </tr></thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
+        <p class="hint" id="sheet-note"></p>
+      </div>
+      <div class="card">
+        <h2>By site</h2>
+        <div class="sites" id="sites"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    Open source · MIT licence · <a href="https://github.com/Royal-chemistry/dutypay">GitHub</a>
+  </footer>
+
+  <div id="print-area" aria-hidden="true"></div>
+  <div id="toast" role="status"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
