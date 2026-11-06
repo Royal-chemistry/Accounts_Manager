@@ -81,7 +81,6 @@ Everything is stored in your browser's local storage on that device only. Cleari
 
 - Daily attendance sheet (tick per day) that fills in days worked
 - Bank-specific bulk-payment formats (SBI, Federal, HDFC…)
-- Malayalam, Hindi and Tamil translations
 - Customer invoices and GST summary from the cash book
 
 Open an issue or a pull request.
