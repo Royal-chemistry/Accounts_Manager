@@ -163,3 +163,44 @@ export function cashSummary(entries, month) {
   }
   return { count: inMonth.length, income, expense, net: income - expense, byCategory };
 }
+
+/** Invoice totals. inv: { items:[{qty, rate}], gst:boolean, gstRate, payments:[{amount, tds}] } */
+export function invoiceTotals(inv) {
+  const subtotal = Math.round((inv.items || []).reduce((s, it) => s + num(it.qty) * num(it.rate), 0) * 100) / 100;
+  const gst = inv.gst ? Math.round(subtotal * num(inv.gstRate) / 100 * 100) / 100 : 0;
+  const total = Math.round((subtotal + gst) * 100) / 100;
+  const received = (inv.payments || []).reduce((s, p) => s + num(p.amount), 0);
+  const tds = (inv.payments || []).reduce((s, p) => s + num(p.tds), 0);
+  const settled = received + tds;
+  const balance = Math.round((total - settled) * 100) / 100;
+  const status = total > 0 && balance <= 0.5 ? "paid" : settled > 0 ? "partial" : "unpaid";
+  return { subtotal, gst, total, received, tds, balance: Math.max(0, balance), status };
+}
+
+/**
+ * Bank balances from every money movement.
+ * s: { banks:[{id, opening}], cash:[{type, amount, bankId}], invoicePayments:[{amount, bankId}],
+ *      salaryPayments:[{amount, bankId}], advances:[{amount, bankId}], transfers:[{from, to, amount}], loanPayments:[{amount, bankId}] }
+ */
+export function bankBalances(s) {
+  const m = Object.fromEntries((s.banks || []).map((b) => [b.id, num(b.opening)]));
+  const add = (id, v) => { if (id && id in m) m[id] += v; };
+  for (const c of s.cash || []) add(c.bankId, c.type === "income" ? num(c.amount) : -num(c.amount));
+  for (const p of s.invoicePayments || []) add(p.bankId, num(p.amount));
+  for (const p of s.salaryPayments || []) add(p.bankId, -num(p.amount));
+  for (const a of s.advances || []) add(a.bankId, -num(a.amount));
+  for (const p of s.loanPayments || []) add(p.bankId, -num(p.amount));
+  for (const t of s.transfers || []) { add(t.from, -num(t.amount)); add(t.to, num(t.amount)); }
+  for (const k in m) m[k] = Math.round(m[k] * 100) / 100;
+  return m;
+}
+
+/** Next due date (YYYY-MM-DD) on or after `from` for a monthly due day. */
+export function nextDue(dueDay, from) {
+  const d = new Date(from + "T00:00:00");
+  const y = d.getFullYear(), mo = d.getMonth();
+  const clamp = (yy, mm) => Math.min(Number(dueDay) || 1, new Date(yy, mm + 1, 0).getDate());
+  let due = new Date(y, mo, clamp(y, mo));
+  if (due < new Date(y, mo, d.getDate())) due = new Date(y, mo + 1, clamp(y, mo + 1));
+  return `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, "0")}-${String(due.getDate()).padStart(2, "0")}`;
+}

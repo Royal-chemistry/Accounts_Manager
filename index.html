@@ -3,45 +3,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#020617">
   <title>Accounts Manager</title>
-  <meta name="description" content="Free accounts and payroll for small businesses: staff attendance to salary sheet, payslips, bank/UPI payout list and a simple cash book. Runs fully in your browser.">
+  <meta name="description" content="Free accounts for small businesses: payroll, advances, invoices, banks, loans, recurring payments and a cash book. Runs fully in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="top">
-    <div class="wrap top-inner">
-      <div class="brand">
-        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="4" width="26" height="24" rx="5" fill="currentColor"/><path d="M9 21v-4M14 21v-8M19 21v-6M24 21V10" stroke="#14213d" stroke-width="2.8" stroke-linecap="round"/></svg>
-        <div>
-          <h1>Accounts Manager <span class="tagline">· payroll &amp; cash book for small businesses</span></h1>
-          <p class="sub">Attendance → salary sheet, payslips, payout list and monthly accounts. Everything stays in this browser.</p>
-        </div>
-      </div>
-      <div class="toolbar">
-        <button class="btn ghost" id="btn-sample">Load sample data</button>
-        <button class="btn ghost" id="btn-backup">Backup</button>
-        <label class="btn ghost file">Restore<input type="file" id="file-restore" accept=".json" hidden></label>
-        <button class="btn ghost danger" id="btn-clear">Clear all</button>
-      </div>
+<div class="shell">
+  <aside class="side" aria-label="Main">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="4" fill="currentColor"/><path d="M7 16v-3M11 16V9M15 16v-5M19 16V7" stroke="#020617" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <div><b>Accounts Manager</b><small id="biz-name">Your business</small></div>
     </div>
-    <nav class="wrap tabs" role="tablist">
-      <button class="tab active" data-tab="settings" role="tab">1 · Settings</button>
-      <button class="tab" data-tab="guards" role="tab">2 · Staff <span class="count" id="count-guards">0</span></button>
-      <button class="tab" data-tab="register" role="tab">3 · Attendance &amp; pay</button>
-      <button class="tab" data-tab="sheet" role="tab">4 · Salary sheet</button>
-      <button class="tab" data-tab="cash" role="tab">5 · Cash book</button>
-    </nav>
-  </header>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <label class="month-pick">Month<input type="month" id="g-month"></label>
+      <div class="side-actions">
+        <button class="btn sm ghost" id="btn-sample">Sample data</button>
+        <button class="btn sm ghost" id="btn-backup">Backup</button>
+        <label class="btn sm ghost file">Restore<input type="file" id="file-restore" accept=".json" hidden></label>
+        <button class="btn sm ghost danger" id="btn-clear">Clear all</button>
+      </div>
+      <a class="gh" href="https://github.com/Royal-chemistry/Accounts_Manager">Open source · MIT</a>
+    </div>
+  </aside>
 
-  <main class="wrap">
+  <main class="main" id="main">
+    <!-- DASHBOARD -->
+    <section id="tab-dashboard" class="panel active">
+      <header class="ph"><h1>Dashboard</h1><p id="dash-sub" class="muted"></p></header>
+      <div class="kpis" id="dash-kpis"></div>
+      <div class="cols">
+        <div class="card"><div class="card-head"><h2>Bank balances</h2><button class="link" data-go="banks">Banks →</button></div><div id="dash-banks"></div></div>
+        <div class="card"><div class="card-head"><h2>Due soon</h2><button class="link" data-go="recurring">Recurring →</button></div><div id="dash-due"></div></div>
+      </div>
+      <div class="cols">
+        <div class="card"><div class="card-head"><h2>Unpaid invoices</h2><button class="link" data-go="invoices">Invoices →</button></div><div id="dash-recv"></div></div>
+        <div class="card"><div class="card-head"><h2>This month</h2><button class="link" data-go="cash">Cash book →</button></div><div id="dash-month"></div></div>
+      </div>
+    </section>
+
     <!-- SETTINGS -->
-    <section id="tab-settings" class="panel active">
+    <section id="tab-settings" class="panel">
+      <header class="ph"><h1>Settings</h1><p class="muted">Your business details and how pay is worked out.</p></header>
       <div class="card">
-        <h2>Business &amp; month</h2>
         <div class="grid">
           <label>Business name<input id="s-agency" placeholder="e.g. Sunrise Bakery"></label>
-          <label>Address / GSTIN (shown on payslips)<input id="s-address" placeholder="Kochi, Kerala"></label>
-          <label>Month<input type="month" id="s-month"></label>
+          <label>Address / GSTIN (on payslips &amp; invoices)<input id="s-address" placeholder="Kochi, Kerala · GSTIN 32XXXXX"></label>
           <label>Pay basis
             <select id="s-basis">
               <option value="calendar">Salary ÷ days in that month</option>
@@ -51,6 +61,9 @@
           </label>
           <label>Default extra shift rate (₹)<input type="number" id="s-special" min="0" step="50"></label>
           <label>Default food rate per day (₹)<input type="number" id="s-mess" min="0" step="5"></label>
+          <label>Default GST rate (%)<input type="number" id="s-gst" min="0" step="0.5"></label>
+          <label>Invoice number prefix<input id="s-prefix" placeholder="INV-"></label>
+          <label>Bank details on invoices<input id="s-bankline" placeholder="A/c 0000 · IFSC XXXX0000 · UPI biz@upi"></label>
         </div>
         <div class="checks">
           <label class="check"><input type="checkbox" id="s-cap"> Never pay more than the monthly salary for normal days</label>
@@ -60,22 +73,17 @@
         <p class="hint" id="basis-hint"></p>
       </div>
       <div class="card soft">
-        <h2>How it works</h2>
-        <ol class="steps">
-          <li><b>Add your staff</b> once: name, team or branch, monthly salary and bank/UPI details. Or import a CSV.</li>
-          <li><b>Each month</b>, enter days worked, extra shifts, advances, food and other cuts.</li>
-          <li><b>Get the salary sheet</b>: net pay for everyone, team totals, printable payslips and a payout list for your bank.</li>
-          <li><b>Keep a cash book</b> of income and expenses. Salaries are added in automatically, so you see your real profit for the month.</li>
-        </ol>
-        <p class="hint">Works for shops, restaurants, clinics, construction crews, cleaning and security agencies — anyone paying staff by days or shifts. Nothing is uploaded anywhere; use <b>Backup</b> to move your data to another device.</p>
+        <h2>Your data stays with you</h2>
+        <p class="muted">Everything is saved in this browser only — nothing is uploaded. Use <b>Backup</b> (bottom left) to keep a copy or move to another device.</p>
       </div>
     </section>
 
     <!-- STAFF -->
     <section id="tab-guards" class="panel">
+      <header class="ph"><h1>Staff</h1><p class="muted">Everyone you pay. Edit straight in the table.</p></header>
       <div class="card">
         <div class="card-head">
-          <h2>Staff</h2>
+          <h2><span id="count-guards">0</span> people</h2>
           <div class="actions">
             <label class="btn ghost file">Import CSV<input type="file" id="file-guards" accept=".csv,text/csv" hidden></label>
             <button class="btn ghost" id="btn-guards-template">CSV template</button>
@@ -84,116 +92,162 @@
         </div>
         <div class="table-wrap">
           <table class="edit" id="guards-table">
-            <thead><tr>
-              <th>Name</th><th>Team / branch / site</th><th class="n">Monthly salary ₹</th><th>Bank</th><th>Account no.</th><th>IFSC</th><th>UPI ID</th><th>Phone</th><th></th>
-            </tr></thead>
+            <thead><tr><th>Name</th><th>Team / branch / site</th><th class="n">Monthly salary ₹</th><th>Bank</th><th>Account no.</th><th>IFSC</th><th>UPI ID</th><th>Phone</th><th></th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
-        <p class="empty" id="guards-empty">No staff yet. Add someone, import a CSV, or click <b>Load sample data</b> to try it.</p>
+        <p class="empty" id="guards-empty">No staff yet. Add someone, import a CSV, or load the sample data.</p>
       </div>
     </section>
 
-    <!-- ATTENDANCE & PAY -->
+    <!-- ATTENDANCE -->
     <section id="tab-register" class="panel">
+      <header class="ph"><h1>Attendance &amp; pay</h1><p class="muted" id="reg-month"></p></header>
       <div class="card">
         <div class="card-head">
-          <h2>Attendance &amp; pay · <span id="reg-month"></span></h2>
+          <h2>Days worked and deductions</h2>
           <div class="actions">
-            <label class="inline">Team
-              <select id="reg-site"><option value="">All teams</option></select>
-            </label>
+            <label class="inline">Team <select id="reg-site"><option value="">All teams</option></select></label>
             <button class="btn ghost" id="btn-fill-full">Fill full month</button>
           </div>
         </div>
         <div class="table-wrap">
           <table class="edit" id="reg-table">
-            <thead><tr>
-              <th>Staff</th><th class="n">Days worked</th><th class="n">Extra shifts</th><th class="n">Shift rate ₹</th><th class="n">Bonus ₹</th>
-              <th class="n">Advance ₹</th><th class="n">Food days</th><th class="n">Food rate ₹</th><th class="n">Uniform / kit ₹</th><th class="n">Other cut ₹</th><th class="n">Net pay</th>
-            </tr></thead>
+            <thead><tr><th>Staff</th><th class="n">Days worked</th><th class="n">Extra shifts</th><th class="n">Shift rate ₹</th><th class="n">Bonus ₹</th>
+              <th class="n">Advance ₹</th><th class="n">Food days</th><th class="n">Food rate ₹</th><th class="n">Uniform / kit ₹</th><th class="n">Other cut ₹</th><th class="n">Net pay</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
+        <p class="hint">Advances logged on the Advances page are added automatically (shown under the box).</p>
         <p class="empty" id="reg-empty">Add staff first.</p>
       </div>
     </section>
 
-    <!-- SHEET -->
+    <!-- SALARY SHEET -->
     <section id="tab-sheet" class="panel">
-      <div class="stats" id="stats"></div>
+      <header class="ph"><h1>Salary sheet</h1><p class="muted" id="sheet-month"></p></header>
+      <div class="kpis" id="stats"></div>
       <div class="card">
         <div class="card-head">
-          <h2>Salary sheet · <span id="sheet-month"></span></h2>
+          <h2>Pay for the month</h2>
           <div class="actions">
-            <button class="btn ghost" id="btn-csv">Salary sheet CSV</button>
-            <button class="btn ghost" id="btn-payout">Payout list CSV</button>
-            <button class="btn ghost" id="btn-whatsapp">Copy WhatsApp summary</button>
+            <button class="btn ghost" id="btn-csv">Sheet CSV</button>
+            <button class="btn ghost" id="btn-payout">Payout CSV</button>
+            <button class="btn ghost" id="btn-whatsapp">WhatsApp summary</button>
+            <button class="btn ghost" id="btn-payall">Mark all paid</button>
             <button class="btn" id="btn-print">Print payslips</button>
           </div>
         </div>
         <div class="table-wrap">
           <table class="sheet" id="sheet-table">
-            <thead><tr>
-              <th>Staff</th><th>Team</th><th class="n">Days</th><th class="n">Earned</th><th class="n">Extra</th><th class="n">Bonus</th><th class="n">Gross</th>
-              <th class="n">Advance</th><th class="n">Food</th><th class="n">Uniform</th><th class="n">Other</th><th class="n">PF</th><th class="n">ESI</th><th class="n">Net pay</th>
-            </tr></thead>
-            <tbody></tbody>
-            <tfoot></tfoot>
+            <thead><tr><th>Staff</th><th>Team</th><th class="n">Days</th><th class="n">Earned</th><th class="n">Extra</th><th class="n">Bonus</th><th class="n">Gross</th>
+              <th class="n">Advance</th><th class="n">Food</th><th class="n">Uniform</th><th class="n">Other</th><th class="n">PF</th><th class="n">ESI</th><th class="n">Net pay</th><th>Status</th></tr></thead>
+            <tbody></tbody><tfoot></tfoot>
           </table>
         </div>
         <p class="hint" id="sheet-note"></p>
       </div>
+      <div class="card"><h2>By team</h2><div class="tiles" id="sites"></div></div>
+    </section>
+
+    <!-- ADVANCES -->
+    <section id="tab-advances" class="panel">
+      <header class="ph"><h1>Advances</h1><p class="muted">Money given to staff before payday. It's deducted from that month's pay automatically.</p></header>
+      <div class="kpis" id="adv-kpis"></div>
       <div class="card">
-        <h2>By team</h2>
-        <div class="sites" id="sites"></div>
+        <div class="card-head"><h2 id="adv-title">Advances</h2><div class="actions"><button class="btn" id="btn-add-adv">+ Record advance</button></div></div>
+        <div class="table-wrap"><table class="sheet" id="adv-table"><thead><tr><th>Date</th><th>Staff</th><th>Team</th><th>Paid from</th><th>Note</th><th class="n">Amount</th><th></th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- CLIENTS -->
+    <section id="tab-clients" class="panel">
+      <header class="ph"><h1>Clients</h1><p class="muted">Customers you invoice.</p></header>
+      <div class="card">
+        <div class="card-head"><h2><span id="count-clients">0</span> clients</h2><div class="actions"><button class="btn" id="btn-add-client">+ Add client</button></div></div>
+        <div class="table-wrap"><table class="sheet" id="client-table"><thead><tr><th>Client</th><th>Contact</th><th>Phone</th><th>GSTIN</th><th class="n">Invoiced</th><th class="n">Outstanding</th><th></th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- INVOICES -->
+    <section id="tab-invoices" class="panel">
+      <header class="ph"><h1>Invoices</h1><p class="muted">Bill clients, track what's paid, and print GST invoices.</p></header>
+      <div class="kpis" id="inv-kpis"></div>
+      <div class="card">
+        <div class="card-head">
+          <h2>All invoices</h2>
+          <div class="actions">
+            <label class="inline">Show <select id="inv-filter"><option value="">All</option><option value="open">Unpaid &amp; partial</option><option value="paid">Paid</option></select></label>
+            <button class="btn" id="btn-add-inv">+ New invoice</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table class="sheet" id="inv-table"><thead><tr><th>No.</th><th>Date</th><th>Client</th><th class="n">Total</th><th class="n">Received</th><th class="n">Balance</th><th>Status</th><th></th></tr></thead><tbody></tbody></table></div>
       </div>
     </section>
 
     <!-- CASH BOOK -->
     <section id="tab-cash" class="panel">
-      <div class="stats" id="cash-stats"></div>
+      <header class="ph"><h1>Cash book</h1><p class="muted" id="cash-month"></p></header>
+      <div class="kpis" id="cash-stats"></div>
       <div class="card">
-        <div class="card-head">
-          <h2>Cash book · <span id="cash-month"></span></h2>
-          <div class="actions">
-            <button class="btn ghost" id="btn-cash-csv">Cash book CSV</button>
-          </div>
-        </div>
         <form class="cash-form" id="cash-form">
           <label>Date<input type="date" id="c-date" required></label>
-          <label>Type
-            <select id="c-type"><option value="expense">Expense</option><option value="income">Income</option></select>
-          </label>
-          <label>Category<input id="c-cat" list="cat-list" placeholder="Rent, Sales, Electricity…" required></label>
+          <label>Type<select id="c-type"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+          <label>Category<input id="c-cat" list="cat-list" placeholder="Rent, Sales…" required></label>
           <label class="wide">Note<input id="c-note" placeholder="Optional"></label>
-          <label>Paid via<input id="c-via" list="via-list" placeholder="Cash, UPI, Bank…"></label>
+          <label>Account<select id="c-bank"></select></label>
           <label>Amount ₹<input type="number" id="c-amount" min="0" step="0.01" required></label>
           <button class="btn" type="submit">+ Add</button>
           <datalist id="cat-list"></datalist>
-          <datalist id="via-list"><option>Cash</option><option>UPI</option><option>Bank transfer</option><option>Card</option><option>Cheque</option></datalist>
         </form>
-        <div class="table-wrap">
-          <table class="sheet" id="cash-table">
-            <thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Paid via</th><th class="n">Income</th><th class="n">Expense</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <p class="hint">Salaries for this month (from the salary sheet) are counted automatically in the profit above — don't add them here again.</p>
+        <div class="table-wrap"><table class="sheet" id="cash-table"><thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Account</th><th class="n">Income</th><th class="n">Expense</th><th></th></tr></thead><tbody></tbody></table></div>
+        <p class="hint">Salaries, advances, invoice receipts and loan EMIs are counted from their own pages — don't add them here again.</p>
+      </div>
+      <div class="cols">
+        <div class="card"><h2>By category</h2><div class="tiles" id="cash-cats"></div></div>
+        <div class="card"><div class="card-head"><h2>Export</h2></div><button class="btn ghost" id="btn-cash-csv">Cash book CSV</button></div>
+      </div>
+    </section>
+
+    <!-- RECURRING -->
+    <section id="tab-recurring" class="panel">
+      <header class="ph"><h1>Recurring payments</h1><p class="muted">Rent, subscriptions, EMIs, SIPs — anything paid every month.</p></header>
+      <div class="kpis" id="rec-kpis"></div>
+      <div class="card">
+        <div class="card-head"><h2 id="rec-title">Every month</h2><div class="actions"><button class="btn" id="btn-add-rec">+ Add recurring</button></div></div>
+        <div class="table-wrap"><table class="sheet" id="rec-table"><thead><tr><th>Due</th><th>Name</th><th>Category</th><th>Paid from</th><th class="n">Amount</th><th>This month</th><th></th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- BANKS -->
+    <section id="tab-banks" class="panel">
+      <header class="ph"><h1>Banks &amp; loans</h1><p class="muted">Balances update from every payment you record.</p></header>
+      <div class="kpis" id="bank-kpis"></div>
+      <div class="card">
+        <div class="card-head"><h2>Accounts</h2><div class="actions"><button class="btn ghost" id="btn-transfer">Transfer</button><button class="btn ghost" id="btn-adjust">Match bank</button><button class="btn" id="btn-add-bank">+ Add account</button></div></div>
+        <div class="tiles" id="bank-tiles"></div>
       </div>
       <div class="card">
-        <h2>By category</h2>
-        <div class="sites" id="cash-cats"></div>
+        <div class="card-head"><h2>Loans</h2><div class="actions"><button class="btn" id="btn-add-loan">+ Add loan</button></div></div>
+        <div class="table-wrap"><table class="sheet" id="loan-table"><thead><tr><th>Loan</th><th>Lender</th><th>EMI day</th><th class="n">EMI</th><th class="n">Paid</th><th class="n">Outstanding</th><th></th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="card">
+        <h2>Recent movements</h2>
+        <div class="table-wrap"><table class="sheet" id="move-table"><thead><tr><th>Date</th><th>Account</th><th>What</th><th class="n">In</th><th class="n">Out</th></tr></thead><tbody></tbody></table></div>
       </div>
     </section>
   </main>
+</div>
 
-  <footer class="wrap foot">
-    Open source · MIT licence · <a href="https://github.com/Royal-chemistry/Accounts_Manager">GitHub</a>
-  </footer>
-
-  <div id="print-area" aria-hidden="true"></div>
-  <div id="toast" role="status"></div>
-  <script type="module" src="js/app.js"></script>
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <form method="dialog" id="dlg-form">
+    <h2 id="dlg-title"></h2>
+    <div id="dlg-body"></div>
+    <div class="dlg-actions"><button class="btn ghost" value="cancel" formnovalidate>Cancel</button><button class="btn" value="ok" id="dlg-ok">Save</button></div>
+  </form>
+</dialog>
+<div id="print-area" aria-hidden="true"></div>
+<div id="toast" role="status"></div>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

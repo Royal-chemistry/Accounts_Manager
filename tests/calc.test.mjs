@@ -86,3 +86,29 @@ test("cash book summary for a month", () => {
   assert.equal(s.net, 29500);
   assert.equal(s.byCategory.Rent.expense, 20500);
 });
+
+import { invoiceTotals, bankBalances, nextDue } from "../js/calc.js";
+test("invoice totals with GST, TDS and part payment", () => {
+  const inv = { items: [{ qty: 93, rate: 516.13 }], gst: true, gstRate: 18, payments: [{ amount: 56160, tds: 480 }] };
+  const t = invoiceTotals({ items: [{ qty: 1, rate: 48000 }], gst: true, gstRate: 18, payments: [{ amount: 56160, tds: 480 }] });
+  assert.equal(t.total, 56640); assert.equal(t.balance, 0); assert.equal(t.status, "paid");
+  const p = invoiceTotals({ items: [{ qty: 2, rate: 1000 }], gst: false, payments: [{ amount: 500 }] });
+  assert.equal(p.balance, 1500); assert.equal(p.status, "partial");
+  assert.equal(invoiceTotals({ items: [], payments: [] }).status, "unpaid");
+  assert.ok(invoiceTotals(inv).subtotal > 47999);
+});
+test("bank balances", () => {
+  const b = bankBalances({
+    banks: [{ id: "a", opening: 1000 }, { id: "b", opening: 0 }],
+    cash: [{ type: "income", amount: 500, bankId: "a" }, { type: "expense", amount: 200, bankId: "a" }, { type: "expense", amount: 99, bankId: null }],
+    invoicePayments: [{ amount: 3000, bankId: "b" }], salaryPayments: [{ amount: 1500, bankId: "b" }],
+    advances: [{ amount: 300, bankId: "a" }], transfers: [{ from: "a", to: "b", amount: 400 }], loanPayments: [{ amount: 100, bankId: "b" }],
+  });
+  assert.equal(b.a, 1000 + 500 - 200 - 300 - 400);
+  assert.equal(b.b, 3000 - 1500 + 400 - 100);
+});
+test("next due date", () => {
+  assert.equal(nextDue(5, "2026-11-04"), "2026-11-05");
+  assert.equal(nextDue(5, "2026-11-06"), "2026-12-05");
+  assert.equal(nextDue(31, "2026-02-10"), "2026-02-28");
+});

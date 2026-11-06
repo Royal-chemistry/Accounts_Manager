@@ -1,6 +1,6 @@
 # 📊 Accounts Manager
 
-**Free payroll and cash book for small businesses.** Enter your staff's days worked and get a salary sheet, printable payslips and a bank/UPI payout list. Keep a simple income and expense book alongside it, and see your real profit each month.
+**Free accounts for small businesses:** payroll, advances, invoices, banks, loans, recurring payments and a cash book in one place, with your real profit every month.
 
 It runs entirely in your browser. There's no sign-up and no server, and your data never leaves your device.
 
@@ -23,27 +23,23 @@ Most payroll software is built for office staff on fixed salaries, with HR modul
 
 ## Features
 
-**Payroll**
-- **Staff list:** name, team/branch, monthly salary, bank account, IFSC and UPI. You can import a CSV.
-- **Monthly attendance and pay:** days worked, extra shifts, bonus, advance, food, uniform/kit and other cuts. Net pay updates as you type.
-- **Three pay bases:** salary ÷ days in that month, ÷ 30, or ÷ 26. You can also cap pay at the monthly salary.
-- **Optional PF and ESI** employee deductions.
-- **Salary sheet** with totals and a **per-team summary**.
-- **Printable payslips:** one per person per page, with the amount in words.
-- **Payout list CSV** with name, amount, account, IFSC and UPI, ready for bulk transfer.
-- **WhatsApp summary:** one tap copies the month's pay as text.
-- **Flags anyone who owes you money,** where deductions are more than pay, and leaves them out of the payout.
+| Area | What you get |
+|---|---|
+| **Dashboard** | Money in banks, what clients owe you, salaries still to pay, this month's profit, payments due soon |
+| **Staff** | Name, team/branch, salary, bank, IFSC, UPI. Edit inline or import a CSV |
+| **Attendance & pay** | Days worked, extra shifts, bonus, food, uniform/kit and other cuts. Net pay updates as you type |
+| **Salary sheet** | Totals by team, mark salaries paid from an account, printable payslips, payout CSV for bulk transfer, WhatsApp summary |
+| **Advances** | Log advances by date. They come off that month's pay automatically |
+| **Clients & invoices** | GST or non-GST invoices with numbering, part payments, TDS, overdue tracking and print-ready tax invoices (CGST/SGST split) |
+| **Cash book** | Income and expenses by category and account, CSV export, with real monthly profit including salaries, invoices and EMIs |
+| **Recurring payments** | Rent, subscriptions, EMIs and SIPs by due day. One tap marks them paid and adds them to the cash book |
+| **Banks & loans** | Live balance per account from every payment, transfers, "match to bank statement" adjustment, loans with EMI and outstanding balance |
 
-**Cash book**
-- **Income and expenses** with date, category, note and payment method (cash, UPI, bank…).
-- **Monthly totals by category.**
-- **Profit or loss for the month,** with salaries from the salary sheet included automatically.
-- **CSV export** for your accountant.
+Also: three pay bases (÷ days in month, ÷ 30, ÷ 26), optional PF/ESI, backup and restore, and a dark, phone-friendly design. It works offline once loaded.
 
-**Everywhere:** backup and restore as one file, works on phones, and works offline once loaded.
-
+![Banks and loans](docs/banks.png)
+![Invoices](docs/invoices.png)
 ![Attendance and pay](docs/register.png)
-![Cash book](docs/cashbook.png)
 
 ## How pay is calculated
 
