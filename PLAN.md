@@ -257,7 +257,7 @@ Payroll with all three pay bases, PF and ESI, extra shifts, bonus, deductions, s
 // ...payment = { mode: "cash" | "bank" | "upi" | "credit", accountId, untracked }
 ```
 
-**Money is stored in rupees, as it is today.** Totals add up in whole paise internally to avoid rounding drift. Converting all stored values to paise would add risk to the migration without any visible benefit.
+**Money is stored in rupees, as it is today.** Totals are rounded to the paisa after adding, which removes any floating-point noise and matches how v1 calculates. Converting all stored values to paise would add risk to the migration without any visible benefit.
 
 ### 4.2 Field changes
 
