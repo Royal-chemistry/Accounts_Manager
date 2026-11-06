@@ -20,8 +20,11 @@ export default defineConfig({
     locale: "en-IN",
   },
   projects: [
-    { name: "desktop", use: { ...browser, viewport: { width: 1440, height: 900 } } },
-    { name: "phone", use: { ...browser, viewport: { width: 375, height: 812 }, hasTouch: true, isMobile: true } },
+    // User flows run on a desktop and a phone.
+    { name: "desktop", testIgnore: /pages\.spec/, use: { ...browser, viewport: { width: 1440, height: 900 } } },
+    { name: "phone", testIgnore: /pages\.spec/, use: { ...browser, viewport: { width: 375, height: 812 }, hasTouch: true, isMobile: true } },
+    // The page matrix sets its own sizes and themes.
+    { name: "pages", testMatch: /pages\.spec/, use: { ...browser } },
   ],
   webServer: {
     command: "node tests/e2e/server.mjs",
