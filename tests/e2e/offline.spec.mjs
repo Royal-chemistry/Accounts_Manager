@@ -47,6 +47,45 @@ test("the app opens, moves around and saves with no connection", async ({ page, 
   expect(problems).toEqual([]);
 });
 
+test("everything works from a sub-folder, the way GitHub Pages serves the live site", async ({ page, context }) => {
+  const problems = watchPage(page);
+  const outside = [];
+  page.on("request", (r) => {
+    const url = new URL(r.url());
+    if (url.hostname === "localhost" && !url.pathname.startsWith("/Accounts_Manager/")) outside.push(url.pathname);
+  });
+  await seed(page, { data: sample(TODAY) });
+  await page.goto("/Accounts_Manager/");
+  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator(".chart")).toBeVisible();
+  await waitUntilReadyOffline(page);
+  expect(await page.evaluate(async () => new URL((await navigator.serviceWorker.ready).scope).pathname)).toBe("/Accounts_Manager/");
+  await context.setOffline(true);
+  await page.goto("/Accounts_Manager/");
+  await expect(page.locator(".chart")).toBeVisible();
+  await page.goto("/Accounts_Manager/index.html#/reports/gst");
+  await expect(page.locator("h1")).toHaveText("Reports");
+  await context.setOffline(false);
+  expect(outside).toEqual([]);
+  expect(problems).toEqual([]);
+});
+
+test("other sites sharing this address keep their saved files, and only our old copies are cleared", async ({ page }) => {
+  await page.goto("/sw.js"); // anywhere on this address that doesn't start the app
+  await page.evaluate(async () => {
+    await caches.open("another-project-cache");
+    await caches.open("accounts-manager-v1");
+  });
+  await seed(page, { data: sample(TODAY) });
+  await page.goto("/index.html");
+  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await waitUntilReadyOffline(page);
+  const names = await page.evaluate(() => caches.keys());
+  expect(names).toContain("another-project-cache");
+  expect(names).toContain("accounts-manager-v2");
+  expect(names).not.toContain("accounts-manager-v1");
+});
+
 test("a link with extra details on the end still opens the app with no connection", async ({ page, context }) => {
   await seed(page, { data: sample(TODAY) });
   await page.goto("/index.html");

@@ -22,7 +22,9 @@ const TYPES = {
 
 createServer(async (req, res) => {
   const { pathname } = new URL(req.url, "http://localhost");
-  const safe = normalize(decodeURIComponent(pathname)).replace(/^([/\\])+/, "");
+  // The live site is served from this sub-folder, so tests can check nothing assumes the top of the site.
+  const path = pathname.replace(/^\/Accounts_Manager(?=\/|$)/, "");
+  const safe = normalize(decodeURIComponent(path)).replace(/^([/\\])+/, "");
   const file = join(ROOT, safe || "index.html");
   if (!file.startsWith(ROOT.replace(/[/\\]$/, "") + sep) && file !== ROOT) {
     res.writeHead(403).end("Forbidden");

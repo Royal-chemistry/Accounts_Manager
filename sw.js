@@ -77,9 +77,10 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
+  // Other sites can share this address (all of a GitHub user's project pages do), so only our own old copies go.
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith("accounts-manager-") && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });
@@ -97,9 +98,10 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(async () => {
-        const saved = await caches.match(request);
+        const cache = await caches.open(CACHE);
+        const saved = await cache.match(request);
         if (saved) return saved;
-        if (request.mode === "navigate") return caches.match("index.html");
+        if (request.mode === "navigate") return cache.match("index.html");
         return Response.error();
       }),
   );
