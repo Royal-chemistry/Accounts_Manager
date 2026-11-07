@@ -2,7 +2,7 @@
 
 Notable changes to Accounts Manager. Versions follow [semantic versioning](https://semver.org), and the format follows [Keep a Changelog](https://keepachangelog.com).
 
-## [2.1.0] - Unreleased
+## [2.1.0] - 2026-11-07
 
 A new look, inspired by the glass design in Apple's latest apps, and a few new ways of working built around it. Your records and figures aren't touched by this update.
 
@@ -65,4 +65,5 @@ A rebuild of the whole app. Everything from 1.x is still here, your saved data u
 
 The first public release: payroll, advances, invoices, recurring payments, banks and loans, a cash book, backup and restore, and sample data.
 
+[2.1.0]: https://github.com/Royal-chemistry/Accounts_Manager/releases/tag/v2.1.0
 [2.0.0]: https://github.com/Royal-chemistry/Accounts_Manager/releases/tag/v2.0.0
