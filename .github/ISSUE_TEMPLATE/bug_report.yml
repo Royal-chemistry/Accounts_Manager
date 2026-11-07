@@ -1,0 +1,63 @@
+name: Bug report
+description: Something doesn't work, or a figure looks wrong
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting this. **Please don't paste real business data here**, because issues are public. Change names and amounts, or reproduce it with the sample data.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Invoices
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app?
+      options:
+        - Dashboard
+        - Staff, attendance or salary
+        - Clients or invoices
+        - Suppliers or purchases
+        - Cash book, recurring or banks
+        - Stock
+        - Reports
+        - Backup, restore or upgrading old data
+        - Something else
+    validations:
+      required: true
+  - type: dropdown
+    id: money
+    attributes:
+      label: Does this affect any figures or saved data?
+      options:
+        - "No"
+        - "Yes, a figure looks wrong"
+        - "Yes, data is missing or changed"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Chrome 140 on Windows 11, or Safari on iPhone 15
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or anything else
+      description: Please hide any real names, amounts, account numbers or tax IDs.

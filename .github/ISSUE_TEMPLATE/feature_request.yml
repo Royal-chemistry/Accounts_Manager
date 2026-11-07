@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest something that would make your daily accounts easier
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the job in your business, rather than a particular solution.
+      placeholder: Every month I have to work out ... by hand, because ...
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: How you imagine it working, if you have an idea.
+  - type: input
+    id: business
+    attributes:
+      label: What kind of business is this for?
+      placeholder: Retail shop, clinic, construction ...
+  - type: checkboxes
+    id: fit
+    attributes:
+      label: Before you send this
+      description: Accounts Manager runs entirely in the browser, with no server and no accounts.
+      options:
+        - label: This can work without a server or sign-in

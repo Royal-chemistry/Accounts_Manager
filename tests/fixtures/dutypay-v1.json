@@ -1,0 +1,9 @@
+{
+ "settings": { "agency": "Old DutyPay Data", "address": "Kochi", "month": "2026-10", "basis": "calendar", "capAtFull": false, "pf": false, "esi": false, "specialRate": 800, "messRate": 140 },
+ "guards": [
+  { "id": "d1", "name": "Anil Kumar", "site": "Matha School", "salary": 14000, "bank": "SBI", "account": "000111", "ifsc": "SBIN0000001", "upi": "", "phone": "" }
+ ],
+ "entries": {
+  "2026-10": { "d1": { "duties": 30, "specialDuties": 2, "specialRate": 800, "bonus": "", "advance": 3000, "messDays": 20, "messRate": 140, "uniform": "", "other": "" } }
+ }
+}
