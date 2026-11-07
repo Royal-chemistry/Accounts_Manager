@@ -13,8 +13,13 @@ import { toast } from "./ui/toast.js";
 
 import advances from "./pages/advances.js";
 import attendance from "./pages/attendance.js";
+import banks from "./pages/banks.js";
+import cashbook, { entryForm } from "./pages/cashbook.js";
 import dashboard from "./pages/dashboard.js";
+import invoices, { invoiceForm } from "./pages/invoices.js";
 import { renderOnboarding } from "./pages/onboarding.js";
+import { clients } from "./pages/parties.js";
+import recurring from "./pages/recurring.js";
 import recycleBin from "./pages/recycle-bin.js";
 import salary from "./pages/salary.js";
 import settings from "./pages/settings.js";
@@ -23,10 +28,8 @@ import styleguide from "./pages/styleguide.js";
 import { placeholder } from "./pages/placeholder.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances,
-  placeholder("clients", "Clients", "building"), placeholder("invoices", "Invoices", "receipt"),
+  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, cashbook, recurring, banks,
   placeholder("suppliers", "Suppliers", "truck"), placeholder("purchases", "Purchases", "cart"),
-  placeholder("cashbook", "Cash book", "book"), placeholder("recurring", "Recurring", "repeat"), placeholder("banks", "Banks & loans", "bank"),
   placeholder("stock", "Stock", "box"), placeholder("reports", "Reports", "chart"),
 ].map((p) => [p.id, p]));
 
@@ -46,7 +49,6 @@ const ctx = {
   today: () => store.today(),
   money: (n, opts) => formatMoney(n, store.state.profile.currency, opts),
   navigate,
-  actions: {},
   exitSample: () => { store.exitSample(); location.hash = "#/dashboard"; location.reload(); },
 };
 
@@ -64,12 +66,11 @@ function badges() {
 }
 
 function quickAdd() {
-  const add = ctx.actions;
   return [
-    { label: "Sale or income", icon: "arrow-in", onSelect: () => add.income?.() ?? toast("Coming in a later milestone", { kind: "info" }) },
-    { label: "Expense", icon: "arrow-out", onSelect: () => add.expense?.() ?? toast("Coming in a later milestone", { kind: "info" }) },
-    { label: "Invoice", icon: "receipt", onSelect: () => add.invoice?.() ?? toast("Coming in a later milestone", { kind: "info" }) },
-    { label: "Purchase", icon: "cart", onSelect: () => add.purchase?.() ?? toast("Coming in a later milestone", { kind: "info" }) },
+    { label: "Sale or income", icon: "arrow-in", onSelect: () => entryForm(ctx, "income") },
+    { label: "Expense", icon: "arrow-out", onSelect: () => entryForm(ctx, "expense") },
+    { label: "Invoice", icon: "receipt", onSelect: () => invoiceForm(ctx) },
+    { label: "Purchase", icon: "cart", onSelect: () => toast("Coming in a later milestone", { kind: "info" }) },
   ];
 }
 

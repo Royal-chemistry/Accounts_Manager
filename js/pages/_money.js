@@ -6,13 +6,13 @@ import { paymentLabel } from "../ui/payment-field.js";
 export function applyPayment(doc, value) {
   doc.mode = value.mode;
   doc.accountId = value.mode === "credit" ? null : value.accountId || null;
-  doc.untracked = false;
+  doc.untracked = !!value.untracked;
   return doc;
 }
 
 /** A small badge showing how a record was paid. */
 export const paymentCell = (state, p) => html`<span class="small">${paymentLabel(state, p)}</span>`;
 
-export const paymentField = (formId, { allowCredit = false, label, creditNeedsParty, defaultMode } = {}) => ({
-  k: "payment", type: "payment", formId, allowCredit, label, creditNeedsParty, defaultMode,
+export const paymentField = (formId, { allowCredit = false, label, creditNeedsParty, defaultMode, hideDue = false } = {}) => ({
+  k: "payment", type: "payment", formId, allowCredit, label, creditNeedsParty, defaultMode, hideDue,
 });

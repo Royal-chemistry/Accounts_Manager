@@ -152,6 +152,7 @@ function wireForm(root, formEl, { fields, values, ctx, onSubmit, afterSubmit, cl
   const setWarning = (k, message) => { const el = $(`[data-warn-for="${k}"]`, root); if (el) el.textContent = message || ""; };
   const api = {
     root, setError, setWarning, close: closeForm,
+    initial: values, // what the form opened with, for custom fields setting themselves up
     values: collect,
     snapshot: () => JSON.stringify(collect()),
     setValue(k, v) {
@@ -213,6 +214,7 @@ function wireForm(root, formEl, { fields, values, ctx, onSubmit, afterSubmit, cl
     }
     // Fields that are hidden don't count.
     for (const f of fields) if (f.when && !f.when(now) && f.k) delete now[f.k];
+    api.again = !!e.submitter?.hasAttribute("data-again");
     const result = await onSubmit(now, api);
     if (result !== false) afterSubmit?.();
   });
@@ -225,7 +227,7 @@ function wireForm(root, formEl, { fields, values, ctx, onSubmit, afterSubmit, cl
  * type: text, email, tel, money, number, date, select, text-list, textarea, checkbox, segmented, payment, custom, section, note
  * onSubmit(values, api): return false to keep the form open. api.setError(key, message) shows a message on a field.
  */
-export function openForm({ title, intro, fields, values = {}, submitLabel = "Save", size = "", ctx, onSubmit, cancelLabel = "Cancel", footNote = null }) {
+export function openForm({ title, intro, fields, values = {}, submitLabel = "Save", size = "", ctx, onSubmit, cancelLabel = "Cancel", footNote = null, againLabel = null }) {
   formCounter++;
   let initial = "";
   let api = null;
@@ -235,6 +237,7 @@ export function openForm({ title, intro, fields, values = {}, submitLabel = "Sav
     foot: html`
       ${footNote !== null ? html`<span class="modal-foot-note" data-foot-note>${footNote}</span>` : ""}
       <button type="button" class="btn" data-modal-close>${cancelLabel}</button>
+      ${againLabel ? html`<button type="submit" class="btn" data-again>${againLabel}</button>` : ""}
       <button type="submit" class="btn btn-primary">${submitLabel}</button>`,
     isDirty: () => api && api.snapshot() !== initial,
   });

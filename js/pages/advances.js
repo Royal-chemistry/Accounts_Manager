@@ -20,7 +20,7 @@ function advanceForm(ctx, advance = null) {
   openForm({
     ctx,
     title: advance ? "Edit advance" : "Record advance",
-    values: advance ? { ...advance, payment: { mode: advance.mode, accountId: advance.accountId } } : { date: defaultDate },
+    values: advance ? { ...advance, payment: { mode: advance.mode, accountId: advance.accountId, untracked: advance.untracked } } : { date: defaultDate },
     fields: [
       { k: "staffId", label: "Staff", type: "select", required: true, full: true, options: [["", "Choose a person"], ...people.map((s) => [s.id, [s.name, s.team].filter(Boolean).join(" · ")])] },
       { k: "date", label: "Date", type: "date", required: true },

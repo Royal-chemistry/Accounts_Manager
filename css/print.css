@@ -33,6 +33,7 @@
 .doc-table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9.5pt; }
 .doc-table th, .doc-table td { padding: 4px 6px; border: 1px solid #999; text-align: left; vertical-align: top; }
 .doc-table th { background: #f2f2f2; font-weight: 600; }
+.doc-table .doc-desc { width: 55%; }
 .doc-table thead { display: table-header-group; }
 .doc-table tr { break-inside: avoid; }
 .doc-table .num, .doc-table .col-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }

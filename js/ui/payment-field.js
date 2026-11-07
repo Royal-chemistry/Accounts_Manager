@@ -5,6 +5,7 @@ import { icon } from "./icons.js";
 const MODES = [["cash", "Cash", "cash"], ["bank", "Bank", "bank"], ["upi", "UPI", "upi"], ["credit", "Credit", "card"]];
 
 export const MODE_LABELS = { cash: "Cash", bank: "Bank", upi: "UPI", credit: "Credit" };
+const UNLINKED = "__not-linked";
 
 const accountsFor = (state, mode) => state.accounts.filter((a) => a.active !== false && (mode === "cash" ? a.kind === "cash" : a.kind !== "cash"));
 
@@ -39,9 +40,9 @@ export function renderPaymentField(id, f, value, ctx) {
     </div>
     <div class="field" data-pay-account>
       <label class="field-label" for="${id}-account">Account</label>
-      <select class="input" id="${id}-account" name="${f.k}-account" data-selected="${accountId}"></select>
+      <select class="input" id="${id}-account" name="${f.k}-account" data-selected="${value?.untracked ? UNLINKED : accountId}" ${value?.untracked ? raw("data-can-unlink") : ""}></select>
     </div>
-    ${f.allowCredit === false ? "" : html`
+    ${f.allowCredit === false || f.hideDue ? "" : html`
     <div class="field" data-pay-due>
       <label class="field-label" for="${id}-due">Due date <span class="muted">(optional)</span></label>
       <input class="input" type="date" id="${id}-due" name="${f.k}-due" value="${value?.due || ""}">
@@ -62,10 +63,14 @@ export function mountPaymentField(wrap, f, ctx) {
     if (needsAccount) {
       const state = ctx.state();
       const list = accountsFor(state, mode);
-      const chosen = defaultAccount(state, mode, select.value || select.dataset.selected);
+      // Older entries that were never linked stay that way unless someone picks an account, so editing a note can't move a balance.
+      const canUnlink = mode === "cash" && "canUnlink" in select.dataset;
+      const wanted = select.value || select.dataset.selected;
+      const chosen = canUnlink && wanted === UNLINKED ? UNLINKED : defaultAccount(state, mode, wanted);
       select.innerHTML = "";
+      if (canUnlink) select.add(new Option("Not linked to an account (older entry)", UNLINKED, false, chosen === UNLINKED));
       for (const a of list) select.add(new Option(a.name, a.id, false, a.id === chosen));
-      if (!list.length) select.add(new Option(mode === "cash" ? "No cash account" : "No bank account yet", ""));
+      if (!list.length && !canUnlink) select.add(new Option(mode === "cash" ? "No cash account" : "No bank account yet", ""));
       note.textContent = !list.length && mode !== "cash" ? "Add a bank account under Banks & loans first." : "";
     } else {
       note.textContent = f.creditNote || "Recorded as unpaid. You can settle it later.";
@@ -79,9 +84,12 @@ export function mountPaymentField(wrap, f, ctx) {
 
 export function readPaymentField(wrap) {
   const mode = wrap.querySelector('input[type="radio"]:checked')?.value || "cash";
+  const account = wrap.querySelector("select")?.value || null;
+  const unlinked = mode === "cash" && account === UNLINKED;
   return {
     mode,
-    accountId: mode === "credit" ? null : wrap.querySelector("select")?.value || null,
+    accountId: mode === "credit" || unlinked ? null : account,
+    untracked: unlinked,
     due: mode === "credit" ? wrap.querySelector('input[type="date"]')?.value || "" : "",
   };
 }
@@ -91,6 +99,7 @@ export function paymentFieldError(value, f, values) {
     if (f.creditNeedsParty && !values[f.creditNeedsParty]) return "Choose who this is on credit with";
     return "";
   }
+  if (value?.untracked) return "";
   if (!value?.accountId) return value?.mode === "cash" ? "Add a cash account first" : "Choose an account. You can add one under Banks & loans";
   return "";
 }

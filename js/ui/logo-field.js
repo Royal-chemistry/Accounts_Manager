@@ -39,7 +39,7 @@ export function logoField({ k = "logo", label = "Logo", hint = "PNG, JPEG or Web
     k, label, type: "custom", full: true, hint,
     read: (el) => el.dataset.value || "",
     mount(el, api) {
-      el.dataset.value = api.values()[k] || "";
+      el.dataset.value = api.initial[k] || "";
       const paint = () => {
         setHTML(el, html`
           <div class="logo-field">
