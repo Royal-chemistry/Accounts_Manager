@@ -29,6 +29,12 @@ test("every browser test runs on the fixed date, so results can't depend on the 
   }
 });
 
+test("GitHub Pages will serve files whose names start with an underscore", () => {
+  // Pages runs Jekyll by default, which silently drops them, and the app wouldn't start. No browser test can see this.
+  const underscored = [...JS(), ...CSS()].filter((f) => f.split(/[\\/]/).some((part) => part.startsWith("_")));
+  if (underscored.length) assert.ok(existsSync(join(ROOT, ".nojekyll")), `.nojekyll is needed for ${underscored.join(", ")}`);
+});
+
 test("every link and picture in the docs points at something that exists", () => {
   for (const doc of ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "tests/fixtures/README.md"]) {
     const text = read(doc);
