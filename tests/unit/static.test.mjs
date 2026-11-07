@@ -132,5 +132,50 @@ test("every colour pair passes WCAG AA in both themes", () => {
     pair("text", "warning-soft", 4.5);
     pair("text", "info-soft", 4.5);
     pair("text", "danger-soft", 4.5);
+    // The page heading sits directly on the colour that drifts behind the interface.
+    for (const bg of ["amb-1", "amb-2", "amb-3"]) {
+      pair("text", bg, 4.5);
+      pair("text-muted", bg, 4.5);
+    }
+    pair("primary-text", "selected", 4.5);
+  }
+  for (let i = 1; i <= 8; i++) {
+    for (const side of ["a", "b"]) {
+      assert.ok(ratio(light["on-art"], light[`art-${i}${side}`]) >= 4.5, `initials on artwork ${i}${side} are ${ratio(light["on-art"], light[`art-${i}${side}`]).toFixed(2)}`);
+    }
+  }
+});
+
+// A browser can't report contrast through blur, and axe skips it. So this works out the worst case by hand:
+// the clearest the glass ever gets, with the strongest colour in the app scrolled directly beneath it.
+test("text on glass stays readable over anything that can scroll beneath it", () => {
+  const css = read("css/tokens.css");
+  const lightBlock = css.slice(css.indexOf(":root {"), css.indexOf(':root[data-theme="dark"]'));
+  const darkBlock = css.slice(css.indexOf(':root[data-theme="dark"]'), css.indexOf("/* Touch screens"));
+  const number = (block, name) => Number(block.match(new RegExp(`--${name}:\\s*([\\d.]+)`))[1]);
+  const channels = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const toHex = (rgb) => `#${rgb.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("")}`;
+  const over = (tint, alpha, hex) => toHex(channels(hex).map((c, i) => tint[i] * alpha + c * (1 - alpha)));
+
+  for (const [theme, block] of [["light", lightBlock], ["dark", darkBlock]]) {
+    const t = { ...tokens(lightBlock), ...tokens(block) };
+    const tint = block.match(/--glass-tint:\s*(\d+) (\d+) (\d+)/).slice(1).map(Number);
+    const art = Object.keys(t).filter((k) => /^art-\db?a?$/.test(k) || /^art-\d[ab]$/.test(k)).map((k) => t[k]);
+    const check = (fg, floorName, backdrops) => {
+      const floor = number(block, floorName);
+      for (const hex of backdrops) {
+        const seen = over(tint, floor, hex);
+        const r = ratio(t[fg], seen);
+        assert.ok(r >= 4.5, `${theme}: ${fg} on ${floorName} over ${hex} is ${r.toFixed(2)}, needs 4.5`);
+      }
+    };
+    // Floating controls: anything in the app can scroll under them, so their labels only ever use the main text colour.
+    check("text", "glass-floor", [t.bg, t.surface, t["surface-2"], t.primary, t.danger, t.success, t["series-1"], t["series-2"], ...art]);
+    // The sidebar only ever has the page colour beneath it.
+    check("text", "glass-side-floor", [t.bg, t["amb-1"], t["amb-2"], t["amb-3"]]);
+    check("text-muted", "glass-side-floor", [t.bg, t["amb-1"], t["amb-2"], t["amb-3"]]);
+    // Sheets and menus carry whole forms, so even their secondary text has to survive the darkest thing behind them.
+    check("text", "glass-sheet-floor", [t.bg, t.surface, t.primary, ...art]);
+    check("text-muted", "glass-sheet-floor", [t.bg, t.surface, t.primary, ...art]);
   }
 });

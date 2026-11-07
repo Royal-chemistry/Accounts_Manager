@@ -15,11 +15,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Colour drifting behind everything: the glass picks it up, and tables and figures stay on solid surfaces. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(62vmax 46vmax at 6% -8%, var(--amb-1), transparent 72%),
+    radial-gradient(52vmax 42vmax at 96% 4%, var(--amb-2), transparent 72%),
+    radial-gradient(64vmax 46vmax at 48% 112%, var(--amb-3), transparent 72%);
+}
+
 h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
-h1 { font-size: var(--fs-22); line-height: 1.25; font-weight: 650; letter-spacing: -0.011em; }
-h2 { font-size: var(--fs-16); line-height: 1.35; font-weight: 600; }
-h3 { font-size: var(--fs-14); line-height: 1.4; font-weight: 600; }
+h1 { font-size: var(--fs-34); line-height: 1.12; font-weight: 700; letter-spacing: -0.022em; }
+h2 { font-size: var(--fs-20); line-height: 1.25; font-weight: 700; letter-spacing: -0.012em; }
+h3 { font-size: var(--fs-16); line-height: 1.35; font-weight: 600; }
 small { font-size: var(--fs-13); }
 a { color: var(--primary-text); text-underline-offset: 2px; }
 a:hover { text-decoration-thickness: 2px; }
@@ -68,7 +81,7 @@ strong, b { font-weight: 600; }
   padding: var(--s-2) var(--s-4);
   background: var(--primary);
   color: var(--on-primary);
-  border-radius: var(--r-2);
+  border-radius: var(--r-pill);
   transform: translateY(-200%);
 }
 .skip-link:focus { transform: none; }
@@ -93,7 +106,8 @@ strong, b { font-weight: 600; }
 .grow { flex: 1 1 auto; min-width: 0; }
 
 @media (max-width: 767px) {
-  body { font-size: 0.9375rem; }
+  body { font-size: var(--fs-16); }
+  h1 { font-size: var(--fs-28); }
   input, select, textarea { font-size: var(--fs-16); }
 }
 

@@ -19,6 +19,7 @@
     --bg: #fff;
   }
   html, body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
+  body::before { display: none; }
   body > *:not(#print-root) { display: none !important; }
   #print-root { display: block; }
 }
