@@ -1,5 +1,5 @@
 // Screens that only appear after an interaction, or that need particular data, captured for milestone reviews.
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./helpers.mjs";
 import { mkdirSync } from "node:fs";
 import { fixture, sampleV2, seed } from "./helpers.mjs";
 
@@ -41,6 +41,45 @@ test("pay sheet and payslip", async ({ page }, info) => {
   await page.screenshot({ path: `${SHOTS}/${info.project.name}-payslip.png` });
   await page.emulateMedia({ media: "screen" });
 });
+
+test("invoice form and printed invoice", async ({ page }, info) => {
+  await page.addInitScript(() => { window.print = () => {}; });
+  const s = sampleV2();
+  s.profile.stateCode = "32";
+  await seed(page, { data: s, theme: "light" });
+  await page.goto("/index.html#/invoices");
+  await page.getByRole("button", { name: "New invoice" }).first().click();
+  const d = page.locator("dialog");
+  await d.getByLabel("Description").first().fill("Packing material");
+  await d.getByLabel("Quantity").first().fill("400");
+  await d.getByLabel("Rate", { exact: true }).first().fill("95");
+  await page.screenshot({ path: `${SHOTS}/${info.project.name}-invoice-form.png` });
+  await d.getByRole("button", { name: "Cancel" }).click();
+  await d.getByRole("button", { name: "Discard changes" }).click();
+  await page.locator("tbody tr", { hasText: "ST-003" }).getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("menuitem", { name: "Print" }).click();
+  await page.emulateMedia({ media: "print" });
+  await page.screenshot({ path: `${SHOTS}/${info.project.name}-invoice-print.png` });
+  await page.emulateMedia({ media: "screen" });
+});
+
+test("delete warning", async ({ page }, info) => {
+  await seed(page, { data: sampleV2(), theme: "light" });
+  await page.goto("/index.html#/invoices");
+  await page.locator("tbody tr", { hasText: "ST-002" }).getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("menuitem", { name: "Delete" }).click();
+  await expect(page.locator("dialog")).toBeVisible();
+  await page.screenshot({ path: `${SHOTS}/${info.project.name}-delete-warning.png` });
+});
+
+for (const [name, path] of [["invoices", "invoices"], ["cashbook", "cashbook"], ["banks", "banks"], ["recurring", "recurring"]]) {
+  test(`list page ${name}`, async ({ page }, info) => {
+    await seed(page, { data: sampleV2(), theme: "light" });
+    await page.goto(`/index.html#/${path}`);
+    await expect(page.locator("h1")).toBeVisible();
+    await page.screenshot({ path: `${SHOTS}/${info.project.name}-${name}.png`, fullPage: true });
+  });
+}
 
 for (const tab of ["payroll", "categories", "data"]) {
   test(`settings ${tab}`, async ({ page }, info) => {

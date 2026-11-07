@@ -1,6 +1,6 @@
 // Every page, at every width, in both themes. Fails on console errors, crashes, failed or third-party
 // requests, sideways scrolling, or anything axe finds. Saves a screenshot of each for review.
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./helpers.mjs";
 import { mkdirSync } from "node:fs";
 import { ALL_PAGES, expectAccessible, expectNoHorizontalScroll, sampleV2, seed, watchPage } from "./helpers.mjs";
 
@@ -23,7 +23,7 @@ for (const width of WIDTHS) {
         for (const name of ALL_PAGES) {
           await page.goto(`/index.html#/${name}`);
           await expect(page.locator("#page-title")).toBeVisible();
-          await page.waitForLoadState("networkidle");
+          await page.evaluate(() => document.fonts.ready);
           await page.screenshot({ path: `${SHOTS}/${width}-${theme}-${name}.png`, fullPage: true });
           await expectNoHorizontalScroll(page, `${name} at ${width}px`);
           await expectAccessible(page, `${name} at ${width}px in ${theme}`);
