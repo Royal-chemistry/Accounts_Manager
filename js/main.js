@@ -22,16 +22,15 @@ import { clients, suppliers } from "./pages/parties.js";
 import purchases, { purchaseForm } from "./pages/purchases.js";
 import recurring from "./pages/recurring.js";
 import recycleBin from "./pages/recycle-bin.js";
+import reports from "./pages/reports.js";
 import salary from "./pages/salary.js";
 import settings from "./pages/settings.js";
 import staff from "./pages/staff.js";
 import stock from "./pages/stock.js";
 import styleguide from "./pages/styleguide.js";
-import { placeholder } from "./pages/placeholder.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks, stock,
-  placeholder("reports", "Reports", "chart"),
+  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks, stock, reports,
 ].map((p) => [p.id, p]));
 
 const root = document.getElementById("app");
