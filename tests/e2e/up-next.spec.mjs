@@ -254,11 +254,12 @@ test.describe("the glass", () => {
     await expect.poll(() => backgroundAlpha(page)).toBeLessThan(middle);
     await page.getByLabel("Glass").fill("1");
     await expect.poll(() => backgroundAlpha(page)).toBe(1);
+    // A floor of 0.5 plus a tenth of the rest. The change lands a frame later, so this waits for it.
     await page.getByLabel("Glass").fill("0.1");
-    const low = await backgroundAlpha(page);
+    await expect.poll(() => backgroundAlpha(page)).toBeCloseTo(0.55, 2);
     await page.reload();
     await expect(page.getByLabel("Glass")).toHaveValue("0.1");
-    expect(await backgroundAlpha(page)).toBeCloseTo(low, 2);
+    await expect.poll(() => backgroundAlpha(page)).toBeCloseTo(0.55, 2);
   });
 
   test("goes solid when the device asks for more contrast, and says why", async ({ page, isMobile }) => {
