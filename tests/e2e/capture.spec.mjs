@@ -1,7 +1,7 @@
 // Screens that only appear after an interaction, or that need particular data, captured for milestone reviews.
-import { test, expect } from "./helpers.mjs";
 import { mkdirSync } from "node:fs";
-import { fixture, sampleV2, seed } from "./helpers.mjs";
+import { test, expect, fixture, sampleV2, seed, TODAY } from "./helpers.mjs";
+import { sample } from "../../js/core/sample.js";
 
 const SHOTS = "screenshots/current";
 mkdirSync(SHOTS, { recursive: true });
@@ -80,6 +80,25 @@ for (const [name, path] of [["invoices", "invoices"], ["cashbook", "cashbook"], 
     await page.screenshot({ path: `${SHOTS}/${info.project.name}-${name}.png`, fullPage: true });
   });
 }
+
+test("suppliers, purchases and settling up", async ({ page }, info) => {
+  const shot = (name, opts = {}) => page.screenshot({ path: `${SHOTS}/${info.project.name}-${name}.png`, ...opts });
+  await seed(page, { data: sample(TODAY), theme: "light" });
+  await page.goto("/index.html#/suppliers");
+  await expect(page.locator("tbody tr").first()).toBeVisible();
+  await shot("suppliers", { fullPage: true });
+  await page.locator("tbody tr", { hasText: "City Cleaning Supplies" }).getByRole("button", { name: "Pay supplier" }).click();
+  const d = page.locator("dialog");
+  await expect(d.locator("[data-alloc]")).toHaveCount(2);
+  await shot("settle");
+  await d.getByRole("button", { name: "Cancel" }).click();
+  await page.goto("/index.html#/purchases");
+  await expect(page.locator("tbody tr").first()).toBeVisible();
+  await shot("purchases", { fullPage: true });
+  await page.getByRole("button", { name: "New purchase" }).first().click();
+  await expect(d).toContainText("New purchase");
+  await shot("purchase-form");
+});
 
 for (const tab of ["payroll", "categories", "data"]) {
   test(`settings ${tab}`, async ({ page }, info) => {

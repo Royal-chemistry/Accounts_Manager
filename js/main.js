@@ -18,7 +18,8 @@ import cashbook, { entryForm } from "./pages/cashbook.js";
 import dashboard from "./pages/dashboard.js";
 import invoices, { invoiceForm } from "./pages/invoices.js";
 import { renderOnboarding } from "./pages/onboarding.js";
-import { clients } from "./pages/parties.js";
+import { clients, suppliers } from "./pages/parties.js";
+import purchases, { purchaseForm } from "./pages/purchases.js";
 import recurring from "./pages/recurring.js";
 import recycleBin from "./pages/recycle-bin.js";
 import salary from "./pages/salary.js";
@@ -28,8 +29,7 @@ import styleguide from "./pages/styleguide.js";
 import { placeholder } from "./pages/placeholder.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, cashbook, recurring, banks,
-  placeholder("suppliers", "Suppliers", "truck"), placeholder("purchases", "Purchases", "cart"),
+  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks,
   placeholder("stock", "Stock", "box"), placeholder("reports", "Reports", "chart"),
 ].map((p) => [p.id, p]));
 
@@ -57,9 +57,11 @@ function badges() {
   const s = store.state;
   const today = store.today();
   const overdue = openDocs(s, "receivable").filter((d) => d.docType === "invoice" && d.due && d.due < today).length;
+  const overdueBills = openDocs(s, "payable").filter((d) => d.docType === "purchase" && d.due && d.due < today).length;
   const due = upcoming(s, today).filter((u) => u.overdue || u.days <= 3).length;
   const out = {};
   if (overdue) out.invoices = { count: overdue, tone: "warning", title: "overdue invoices" };
+  if (overdueBills) out.purchases = { count: overdueBills, tone: "warning", title: "overdue bills" };
   if (due) out.recurring = { count: due, tone: "warning", title: "payments due soon" };
   if (s.bin.length) out["recycle-bin"] = { count: s.bin.length, title: "items in the bin" };
   return out;
@@ -70,7 +72,7 @@ function quickAdd() {
     { label: "Sale or income", icon: "arrow-in", onSelect: () => entryForm(ctx, "income") },
     { label: "Expense", icon: "arrow-out", onSelect: () => entryForm(ctx, "expense") },
     { label: "Invoice", icon: "receipt", onSelect: () => invoiceForm(ctx) },
-    { label: "Purchase", icon: "cart", onSelect: () => toast("Coming in a later milestone", { kind: "info" }) },
+    { label: "Purchase", icon: "cart", onSelect: () => purchaseForm(ctx) },
   ];
 }
 
