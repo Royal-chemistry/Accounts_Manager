@@ -44,11 +44,11 @@ function reportTable({ head, rows, foot, numFrom = 1, label }) {
     </div>`;
 }
 
-const printTable = ({ head, rows, foot, numFrom = 1 }) => html`
+const printTable = ({ head, rows, foot, numFrom = 1, isTotal = () => false }) => html`
   <table class="doc-table">
     <thead><tr>${head.map((h, i) => html`<th class="${i >= numFrom ? "num" : ""}">${h}</th>`)}</tr></thead>
     <tbody>
-      ${rows.map((r) => html`<tr>${r.map((c, i) => html`<td class="${i >= numFrom ? "num" : ""}">${c}</td>`)}</tr>`)}
+      ${rows.map((r, n) => html`<tr class="${isTotal(n) ? "total" : ""}">${r.map((c, i) => html`<td class="${i >= numFrom ? "num" : ""}">${c}</td>`)}</tr>`)}
       ${foot ? html`<tr class="total">${foot.map((c, i) => html`<td class="${i >= numFrom ? "num" : ""}">${c}</td>`)}</tr>` : ""}
     </tbody>
   </table>`;
@@ -109,7 +109,7 @@ function profitReport(ctx, range) {
       });
     },
     print: html`
-      ${printTable({ head: ["", "Amount"], rows: rows.map(([l, a]) => [l, m(a)]) })}
+      ${printTable({ head: ["", "Amount"], rows: rows.map(([l, a]) => [l, m(a)]), isTotal: (n) => rows[n][2] === "total" })}
       ${showMonths ? html`<div class="doc-h">Month by month</div>${printTable(monthlyTable)}` : ""}
       <p class="doc-foot">Basis: ${basis === "cash" ? "cash" : "accrual"}. GST, personal spending, loan principal and opening balances aren't part of profit.</p>`,
     csv: [["Line", "Amount"], ...rows.map(([l, a]) => [l, a]), [], ["Month", "Revenue", "Cost of goods", "Expenses", "Staff", "Interest", "Net profit"], ...p.monthly.map((x) => [x.month, x.revenue, x.costOfSales, x.expenses, x.staffCost, x.loanInterest, x.netProfit])],
@@ -143,7 +143,7 @@ function cashReport(ctx, range) {
         ${c.closing === c.actualClosing ? html`<p class="small muted report-note">${icon("check-circle", { cls: "icon-sm icon-inline" })} The closing balance matches your accounts. Transfers between your own accounts aren't counted.</p>` : ""}
         ${unlinked ? html`<div class="banner report-note">${icon("info")}<p>Older entries not linked to any account aren't in these balances: ${m(c.unlinked.in)} in and ${m(c.unlinked.out)} out.</p></div>` : ""}
       </section>`,
-    print: html`${printTable({ head: ["", "Amount"], rows: rows.map(([l, a]) => [l, m(a)]) })}<p class="doc-foot">Transfers between your own accounts aren't counted.</p>`,
+    print: html`${printTable({ head: ["", "Amount"], rows: rows.map(([l, a]) => [l, m(a)]), isTotal: (n) => !!rows[n][2] })}<p class="doc-foot">Transfers between your own accounts aren't counted.</p>`,
     csv: [["Line", "Amount"], ...rows.map(([l, a]) => [l, a])],
   };
 }
@@ -347,7 +347,7 @@ export default {
     on(root, "change", 'input[name="basis"]', (e, el) => { session.set(BASIS_KEY, el.value); rerender(); });
     on(root, "click", "[data-report-csv]", () => downloadFile(`${report.fileName}-${periodFile}.csv`, toCSV(report.csv)));
     on(root, "click", "[data-report-print]", () => {
-      printDocument(html`<section class="doc">${docHead(ctx.state(), { title: report.title, lines: [periodLine, `Printed ${formatDate(ctx.today())}`] })}${report.print}</section>`, { title: `${report.title} ${periodFile.replaceAll("-to-", " to ").replace("as-of-", "as of ")}` });
+      printDocument(html`<section class="doc doc-report">${docHead(ctx.state(), { title: report.title, lines: [periodLine, `Printed ${formatDate(ctx.today())}`] })}${report.print}</section>`, { title: `${report.title} ${periodFile.replaceAll("-to-", " to ").replace("as-of-", "as of ")}` });
     });
   },
 };

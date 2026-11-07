@@ -370,6 +370,8 @@ test.describe("print and PDF", () => {
     await expect(doc).toContainText("Sunrise Traders");
     await expect(doc).toContainText("Profit & Loss");
     await expect(doc).toContainText("Net profit");
+    await expect(doc.locator("tr.total", { hasText: "Net profit" })).toBeVisible();
+    await expect(doc.locator("tr.total", { hasText: "Rent" })).toHaveCount(0);
     await page.emulateMedia({ media: "print" });
     await expect(page.locator(".app")).toBeHidden();
     await expect(page.locator("#print-root")).toBeVisible();
