@@ -54,28 +54,59 @@ export function createShell(root, ctx, { quickAdd, badges }) {
   setHTML(root, html`
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="app" data-app ${collapsed ? raw('data-side="collapsed"') : ""}>
-      <aside class="side" aria-label="Main">
+      <aside class="side glass-side" aria-label="Main">
         <a class="brand" href="#/dashboard" data-brand></a>
-        <nav class="nav" aria-label="Pages" data-nav></nav>
+        <nav class="nav" aria-label="Pages">
+          <div class="nav-items"><span class="lozenge" data-side-lozenge aria-hidden="true" hidden></span><div data-nav></div></div>
+        </nav>
         <div class="side-foot" data-side-foot></div>
       </aside>
       <div class="main-col">
-        <header class="topbar">
+        <header class="topbar" data-topbar>
           <a class="topbar-brand" href="#/dashboard" data-top-brand></a>
-          <button type="button" class="icon-btn side-collapse hide-phone" data-toggle-side aria-label="Collapse or expand the sidebar" title="Collapse or expand the sidebar">${icon("sidebar")}</button>
+          <div class="top-group glass side-collapse hide-phone"><button type="button" class="icon-btn" data-toggle-side aria-label="Collapse or expand the sidebar" title="Collapse or expand the sidebar">${icon("sidebar")}</button></div>
+          <div class="top-group glass top-title" aria-hidden="true" data-top-title></div>
           <div class="topbar-spacer"></div>
-          <div data-month-host></div>
+          <div class="top-group glass" data-month-host></div>
           <button type="button" class="btn btn-primary" data-quick-add aria-haspopup="menu" aria-expanded="false" aria-label="Quick add">${icon("plus")}<span class="quick-add-label">Add</span></button>
-          <button type="button" class="icon-btn" data-theme-btn aria-haspopup="menu" aria-expanded="false" aria-label="Colour theme" title="Colour theme"></button>
-          <button type="button" class="icon-btn hide-phone" data-shortcuts aria-label="Keyboard shortcuts" title="Keyboard shortcuts">${icon("keyboard")}</button>
+          <div class="top-group glass">
+            <button type="button" class="icon-btn" data-theme-btn aria-haspopup="menu" aria-expanded="false" aria-label="Colour theme" title="Colour theme"></button>
+            <button type="button" class="icon-btn hide-phone" data-shortcuts aria-label="Keyboard shortcuts" title="Keyboard shortcuts">${icon("keyboard")}</button>
+          </div>
         </header>
         <div data-banner></div>
         <main class="main" id="main" tabindex="-1"></main>
       </div>
-      <nav class="bottom-bar" aria-label="Quick links" data-bottom></nav>
+      <nav class="bottom-bar" aria-label="Quick links">
+        <div class="tab-capsule glass">
+          <div class="tab-track"><span class="lozenge" data-tab-lozenge aria-hidden="true" hidden></span><div class="tab-items" data-bottom></div></div>
+        </div>
+      </nav>
     </div>`);
 
   const main = $("#main", root);
+
+  /** Slides the highlight onto the selected item. It's hidden when that part of the frame isn't on screen. */
+  function moveLozenge(lozenge, selected) {
+    const shown = selected && selected.offsetWidth > 0;
+    lozenge.hidden = !shown;
+    if (!shown) return;
+    const box = lozenge.parentElement.getBoundingClientRect();
+    const rect = selected.getBoundingClientRect();
+    lozenge.style.width = `${rect.width}px`;
+    lozenge.style.height = `${rect.height}px`;
+    lozenge.style.transform = `translate(${rect.left - box.left}px, ${rect.top - box.top}px)`;
+  }
+  function placeLozenges() {
+    moveLozenge($("[data-side-lozenge]", root), $('[data-nav] [aria-current="page"]', root));
+    moveLozenge($("[data-tab-lozenge]", root), $('[data-bottom] [aria-current="page"]', root));
+  }
+  window.addEventListener("resize", placeLozenges, { passive: true });
+
+  // Once the large page title has scrolled away, a small copy appears in the floating controls.
+  const topbar = $("[data-topbar]", root);
+  const onScroll = () => { topbar.toggleAttribute("data-scrolled", window.scrollY > 72); };
+  window.addEventListener("scroll", onScroll, { passive: true });
 
   // The address bar holds the current page, so a normal jump to #main would count as changing page.
   $(".skip-link", root).addEventListener("click", (e) => {
@@ -99,9 +130,9 @@ export function createShell(root, ctx, { quickAdd, badges }) {
       setHTML($("[data-brand]", root), html`${brandMark(state)}<span class="brand-text"><span class="brand-name">${state.profile.name || "Accounts Manager"}</span><span class="brand-sub">${state.profile.name ? "Accounts Manager" : "Your business"}</span></span>`);
       setHTML($("[data-top-brand]", root), html`${brandMark(state)}<span class="sr-only">${state.profile.name || "Accounts Manager"}, go to dashboard</span>`);
     }
-    const nav = $("[data-nav]", root);
+    const nav = $(".nav", root);
     const scroll = nav.scrollTop;
-    setHTML(nav, navLinks(state, current, b));
+    setHTML($("[data-nav]", root), navLinks(state, current, b));
     nav.scrollTop = scroll;
     setHTML($("[data-side-foot]", root), html`
       <a class="nav-item" href="https://github.com/Royal-chemistry/Accounts_Manager" target="_blank" rel="noopener" title="Open source on GitHub">${icon("github")}<span class="nav-label">Open source · MIT</span></a>`);
@@ -116,6 +147,7 @@ export function createShell(root, ctx, { quickAdd, badges }) {
     setHTML($("[data-bottom]", root), html`
       ${bottom.map((i) => html`<a class="bottom-item" href="#/${i.id}" ${i.id === current ? raw('aria-current="page"') : ""}>${icon(i.icon)}${i.label}</a>`)}
       <button type="button" class="bottom-item" data-more ${!onBottom ? raw('aria-current="page"') : ""}>${icon("menu")}More</button>`);
+    placeLozenges();
     setHTML($("[data-month-host]", root), monthPicker(state.settings.month, ctx.today()));
     setHTML($("[data-banner]", root), ctx.store.isSample ? html`
       <div class="sample-banner">
@@ -145,6 +177,7 @@ export function createShell(root, ctx, { quickAdd, badges }) {
       const next = app.dataset.side === "collapsed" ? "" : "collapsed";
       if (next) app.dataset.side = next; else delete app.dataset.side;
       try { localStorage.setItem(SIDE_KEY, next); } catch { /* not important */ }
+      placeLozenges();
       return;
     }
     if (t.closest("[data-shortcuts]")) { showShortcuts(); return; }
@@ -163,7 +196,14 @@ export function createShell(root, ctx, { quickAdd, badges }) {
   return {
     main,
     paint,
-    setCurrent(page) { current = page; paint(); },
+    setCurrent(page, title = "") {
+      current = page;
+      paint();
+      $("[data-top-title]", root).textContent = title;
+      onScroll();
+      const selected = $('[data-nav] [aria-current="page"]', root);
+      if (selected?.offsetWidth) selected.scrollIntoView({ block: "nearest" });
+    },
   };
 }
 

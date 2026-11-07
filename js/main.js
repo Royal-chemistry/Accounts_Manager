@@ -7,6 +7,7 @@ import { $ } from "./ui/dom.js";
 import { closeMenu } from "./ui/menu.js";
 import { navigate, onRouteChange, parseHash } from "./ui/router.js";
 import { renderRescue, showCrash } from "./ui/screens.js";
+import { trackGlassLight } from "./ui/glass.js";
 import { createShell, showShortcuts } from "./ui/shell.js";
 import { watchSystemTheme } from "./ui/theme.js";
 import { pressUndo, toast } from "./ui/toast.js";
@@ -81,7 +82,7 @@ function startApp() {
 
   function renderPage({ page, params }, { focus = true } = {}) {
     const def = PAGES[page] || PAGES.dashboard;
-    shell.setCurrent(def.id);
+    shell.setCurrent(def.id, def.title);
     document.title = `${def.title} · Accounts Manager`;
     // Each render gets a fresh container, so a page's event listeners never pile up.
     const view = document.createElement("div");
@@ -139,6 +140,7 @@ if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
 }
 
 watchSystemTheme();
+trackGlassLight();
 
 const hasRecords = (s) => s.staff.length || s.invoices.length || s.transactions.length || s.clients.length || s.accounts.length > 1;
 
