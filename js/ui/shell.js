@@ -48,6 +48,7 @@ function navLinks(state, current, badges) {
 export function createShell(root, ctx, { quickAdd, badges }) {
   let current = "dashboard";
   let collapsed = false;
+  let paintedBrand = null;
   try { collapsed = localStorage.getItem(SIDE_KEY) === "collapsed"; } catch { /* not important */ }
 
   setHTML(root, html`
@@ -85,8 +86,13 @@ export function createShell(root, ctx, { quickAdd, badges }) {
   function paint() {
     const state = ctx.state();
     const b = badges();
-    setHTML($("[data-brand]", root), html`${brandMark(state)}<span class="brand-text"><span class="brand-name">${state.profile.name || "Accounts Manager"}</span><span class="brand-sub">${state.profile.name ? "Accounts Manager" : "Your business"}</span></span>`);
-    setHTML($("[data-top-brand]", root), html`${brandMark(state)}<span class="sr-only">${state.profile.name || "Accounts Manager"}, go to dashboard</span>`);
+    // Rebuilding the logo makes it flicker, so this only happens when the name or logo changes.
+    const brand = `${state.profile.name}|${state.profile.logo}`;
+    if (brand !== paintedBrand) {
+      paintedBrand = brand;
+      setHTML($("[data-brand]", root), html`${brandMark(state)}<span class="brand-text"><span class="brand-name">${state.profile.name || "Accounts Manager"}</span><span class="brand-sub">${state.profile.name ? "Accounts Manager" : "Your business"}</span></span>`);
+      setHTML($("[data-top-brand]", root), html`${brandMark(state)}<span class="sr-only">${state.profile.name || "Accounts Manager"}, go to dashboard</span>`);
+    }
     const nav = $("[data-nav]", root);
     const scroll = nav.scrollTop;
     setHTML(nav, navLinks(state, current, b));
