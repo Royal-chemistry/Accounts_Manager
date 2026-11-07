@@ -177,5 +177,23 @@ test("text on glass stays readable over anything that can scroll beneath it", ()
     // Sheets and menus carry whole forms, so even their secondary text has to survive the darkest thing behind them.
     check("text", "glass-sheet-floor", [t.bg, t.surface, t.primary, ...art]);
     check("text-muted", "glass-sheet-floor", [t.bg, t.surface, t.primary, ...art]);
+    // A detail page's heading sits on a 20% wash of its artwork's colour.
+    for (const hex of art) {
+      const wash = toHex(channels(t.bg).map((c, i) => channels(hex)[i] * 0.2 + c * 0.8));
+      for (const fg of ["text", "text-muted"]) assert.ok(ratio(t[fg], wash) >= 4.5, `${theme}: ${fg} on a wash of ${hex} is ${ratio(t[fg], wash).toFixed(2)}`);
+    }
+  }
+});
+
+test("the Up Next sheet stays readable however the colour drifts behind it", () => {
+  const t = tokens(read("css/tokens.css"));
+  const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  for (let i = 1; i <= 8; i++) {
+    for (const side of ["a", "b"]) {
+      // The brightest it gets: artwork mixed 30% with white, under the 35% dimming layer.
+      const seen = rgb(t[`art-${i}${side}`]).map((c) => (c * 0.7 + 255 * 0.3) * 0.65);
+      const hex = `#${seen.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("")}`;
+      assert.ok(ratio(t["on-art"], hex) >= 4.5, `white on artwork ${i}${side} is ${ratio(t["on-art"], hex).toFixed(2)}`);
+    }
   }
 });
