@@ -17,6 +17,9 @@ function compare(a, b) {
   return String(a).localeCompare(String(b), "en", { numeric: true, sensitivity: "base" });
 }
 
+/** How the phone sort menu names a column's two directions. */
+const sortWords = (c) => (c.align === "num" ? ["low first", "high first"] : ["date", "due", "month"].includes(c.key) ? ["earliest first", "latest first"] : ["A to Z", "Z to A"]);
+
 /** A plain empty state, also used outside tables. */
 export function emptyState({ icon: ic = "info", title, hint, action }) {
   return html`
@@ -172,8 +175,8 @@ export function createTable(host, config) {
           <label class="sr-only" for="${config.id}-sort">Sort by</label>
           <select class="input sort-mobile" id="${config.id}-sort" data-table-sort-select>
             ${sortable.flatMap((c) => [
-              html`<option value="${c.key}:asc" ${state.sort?.key === c.key && state.sort.dir !== "desc" ? raw("selected") : ""}>Sort: ${c.label} (low first)</option>`,
-              html`<option value="${c.key}:desc" ${state.sort?.key === c.key && state.sort.dir === "desc" ? raw("selected") : ""}>Sort: ${c.label} (high first)</option>`,
+              html`<option value="${c.key}:asc" ${state.sort?.key === c.key && state.sort.dir !== "desc" ? raw("selected") : ""}>Sort: ${c.label} (${sortWords(c)[0]})</option>`,
+              html`<option value="${c.key}:desc" ${state.sort?.key === c.key && state.sort.dir === "desc" ? raw("selected") : ""}>Sort: ${c.label} (${sortWords(c)[1]})</option>`,
             ])}
           </select>` : ""}
         <span class="small muted" data-table-count role="status"></span>
