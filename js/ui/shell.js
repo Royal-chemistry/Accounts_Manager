@@ -77,6 +77,12 @@ export function createShell(root, ctx, { quickAdd, badges }) {
 
   const main = $("#main", root);
 
+  // The address bar holds the current page, so a normal jump to #main would count as changing page.
+  $(".skip-link", root).addEventListener("click", (e) => {
+    e.preventDefault();
+    main.focus();
+  });
+
   function paintThemeButton() {
     const pref = themePreference();
     const opt = THEME_OPTIONS.find((o) => o.id === pref);
@@ -164,7 +170,7 @@ export function createShell(root, ctx, { quickAdd, badges }) {
 export function showShortcuts() {
   const rows = [
     ["/", "Search the current table"], ["N", "Add a new record on this page"], ["G then D", "Go to the dashboard"],
-    ["?", "Show this list"], ["Esc", "Close a window or menu"],
+    ["U", "Undo, while the Undo message is showing"], ["?", "Show this list"], ["Esc", "Close a window or menu"],
   ];
   openModal({
     title: "Keyboard shortcuts", size: "sm",

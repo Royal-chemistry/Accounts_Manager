@@ -144,6 +144,8 @@ function wireForm(root, formEl, { fields, values, ctx, onSubmit, afterSubmit, cl
   const setError = (k, message) => {
     const el = $(`[data-error-for="${k}"]`, root);
     if (el) el.textContent = message || "";
+    // A custom field's message is about the whole group, like "Add at least one line", not each box inside it.
+    if (fields.find((f) => f.k === k)?.type === "custom") return;
     $$(`[data-field="${k}"] .input`, root).forEach((input) => {
       if (message) input.setAttribute("aria-invalid", "true");
       else input.removeAttribute("aria-invalid");

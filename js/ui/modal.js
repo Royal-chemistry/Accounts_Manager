@@ -35,7 +35,8 @@ export function openModal({ title, body, foot = null, size = "", isDirty = null,
     closed = true;
     dialog.close();
     dialog.remove();
-    if (opener?.isConnected) opener.focus();
+    // When nothing in particular opened it, as with a keyboard shortcut, the page heading is the next best place.
+    if (opener?.isConnected && opener !== document.body) opener.focus();
     else $("#page-title")?.focus();
     onClose?.();
   }

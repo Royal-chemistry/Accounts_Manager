@@ -23,6 +23,15 @@ async function fillLine(dialog, { desc, qty, rate, gst }) {
   if (gst !== undefined) await dialog.getByLabel("GST percent").first().fill(String(gst));
 }
 
+test("an invoice with no lines names the one problem, instead of marking every box wrong", async ({ page }) => {
+  await open(page, "invoices");
+  await page.getByRole("button", { name: "New invoice" }).first().click();
+  const dialog = page.locator("dialog");
+  await dialog.getByRole("button", { name: "Create invoice" }).click();
+  await expect(dialog.getByText("Add at least one line")).toBeVisible();
+  await expect(dialog.getByLabel("Quantity")).not.toHaveAttribute("aria-invalid", "true");
+});
+
 test.describe("clients", () => {
   test("adding one reads the state from their GSTIN, and carries an opening balance", async ({ page }) => {
     const problems = watchPage(page);
