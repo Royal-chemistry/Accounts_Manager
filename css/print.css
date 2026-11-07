@@ -3,8 +3,44 @@
 
 @media print {
   @page { size: A4; margin: 14mm 12mm; }
-  :root { color-scheme: light; }
+  :root, :root[data-theme="dark"] {
+    color-scheme: light;
+    --text: #000;
+    --text-muted: #444;
+    --border: #bbb;
+    --border-strong: #000;
+    --surface: #fff;
+    --surface-2: #f2f2f2;
+    --bg: #fff;
+  }
   html, body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
   body > *:not(#print-root) { display: none !important; }
   #print-root { display: block; }
 }
+
+.doc { color: #000; font-size: 10.5pt; line-height: 1.4; break-after: page; }
+.doc:last-child { break-after: auto; }
+.doc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 8px; margin-bottom: 12px; border-bottom: 2px solid #000; }
+.doc-biz { display: flex; gap: 10px; min-width: 0; }
+.doc-logo { width: 52px; height: 52px; object-fit: contain; flex: none; }
+.doc-biz-name { font-size: 15pt; font-weight: 700; line-height: 1.2; }
+.doc-title-block { text-align: right; flex: none; }
+.doc-title { font-size: 13pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+.doc-small { font-size: 9pt; color: #333; }
+.doc-pre { white-space: pre-line; }
+.doc-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.doc-label { font-size: 8.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #444; }
+.doc-table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9.5pt; }
+.doc-table th, .doc-table td { padding: 4px 6px; border: 1px solid #999; text-align: left; vertical-align: top; }
+.doc-table th { background: #f2f2f2; font-weight: 600; }
+.doc-table thead { display: table-header-group; }
+.doc-table tr { break-inside: avoid; }
+.doc-table .num, .doc-table .col-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.doc-table .total td { font-weight: 700; background: #f2f2f2; }
+.doc-table .group td { font-weight: 700; background: #fafafa; }
+.doc-words { margin: 6px 0; font-size: 9.5pt; }
+.doc-signs { display: flex; justify-content: space-between; gap: 24px; margin-top: 40px; break-inside: avoid; }
+.doc-sign { padding-top: 4px; min-width: 180px; border-top: 1px solid #000; font-size: 9pt; text-align: center; }
+.doc-foot { margin-top: 12px; font-size: 8.5pt; color: #444; }
+.doc-compact { break-after: auto; break-inside: avoid; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px dashed #777; }
+.doc-h { margin: 12px 0 4px; font-size: 11pt; font-weight: 700; }

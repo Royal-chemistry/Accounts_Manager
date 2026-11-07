@@ -96,9 +96,9 @@ export function createTable(host, config) {
     const rest = items.filter((a) => !a.primary);
     return html`<span class="row-actions">
       ${inline.map((a) => html`<button type="button" class="btn btn-sm" data-row-action="${items.indexOf(a)}" data-row-id="${id}">${a.icon ? icon(a.icon, { cls: "icon-sm" }) : ""}${a.label}</button>`)}
-      ${rest.length === 1 && !rest[0].menu
-        ? html`<button type="button" class="icon-btn ${rest[0].danger ? "icon-btn-danger" : ""}" data-row-action="${items.indexOf(rest[0])}" data-row-id="${id}" aria-label="${rest[0].label}" title="${rest[0].label}">${icon(rest[0].icon || "more")}</button>`
-        : rest.length ? html`<button type="button" class="icon-btn" data-row-menu="${id}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions" title="More actions">${icon("more")}</button>` : ""}
+      ${rest.length <= 2 && !rest.some((a) => a.menu)
+        ? rest.map((a) => html`<button type="button" class="icon-btn ${a.danger ? "icon-btn-danger" : ""}" data-row-action="${items.indexOf(a)}" data-row-id="${id}" aria-label="${a.label}" title="${a.label}">${icon(a.icon || "more")}</button>`)
+        : html`<button type="button" class="icon-btn" data-row-menu="${id}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions" title="More actions">${icon("more")}</button>`}
     </span>`;
   }
 
@@ -107,7 +107,8 @@ export function createTable(host, config) {
       ${columns.map((c) => {
         const cls = c.align === "num" ? "col-num" : c.align === "right" ? "col-right" : "";
         const content = c.render ? c.render(row) : row[c.key];
-        return html`<td role="cell" class="${cls}" data-label="${c.label}" data-mobile="${c.mobile || "detail"}">${content ?? ""}</td>`;
+        // Phones hide lines that are zero, so each card only shows what matters.
+        return html`<td role="cell" class="${cls}" data-label="${c.label}" data-mobile="${c.mobile || "detail"}" ${c.isZero?.(row) ? raw("data-zero") : ""}>${content ?? ""}</td>`;
       })}
       ${config.actions ? html`<td role="cell" class="col-actions">${renderActions(row)}</td>` : ""}
     </tr>`);

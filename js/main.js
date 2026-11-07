@@ -11,19 +11,22 @@ import { createShell, showShortcuts } from "./ui/shell.js";
 import { watchSystemTheme } from "./ui/theme.js";
 import { toast } from "./ui/toast.js";
 
+import advances from "./pages/advances.js";
+import attendance from "./pages/attendance.js";
 import dashboard from "./pages/dashboard.js";
 import { renderOnboarding } from "./pages/onboarding.js";
 import recycleBin from "./pages/recycle-bin.js";
+import salary from "./pages/salary.js";
 import settings from "./pages/settings.js";
+import staff from "./pages/staff.js";
 import styleguide from "./pages/styleguide.js";
 import { placeholder } from "./pages/placeholder.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide, settings,
+  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances,
   placeholder("clients", "Clients", "building"), placeholder("invoices", "Invoices", "receipt"),
   placeholder("suppliers", "Suppliers", "truck"), placeholder("purchases", "Purchases", "cart"),
   placeholder("cashbook", "Cash book", "book"), placeholder("recurring", "Recurring", "repeat"), placeholder("banks", "Banks & loans", "bank"),
-  placeholder("staff", "Staff", "users"), placeholder("attendance", "Attendance", "attendance"), placeholder("salary", "Salary sheet", "sheet"), placeholder("advances", "Advances", "wallet"),
   placeholder("stock", "Stock", "box"), placeholder("reports", "Reports", "chart"),
 ].map((p) => [p.id, p]));
 
@@ -77,7 +80,10 @@ function startApp() {
     const def = PAGES[page] || PAGES.dashboard;
     shell.setCurrent(def.id);
     document.title = `${def.title} · Accounts Manager`;
-    def.render(shell.main, ctx, params);
+    // Each render gets a fresh container, so a page's event listeners never pile up.
+    const view = document.createElement("div");
+    shell.main.replaceChildren(view);
+    def.render(view, ctx, params);
     if (focus) {
       window.scrollTo(0, 0);
       $("#page-title", shell.main)?.focus({ preventScroll: true });
