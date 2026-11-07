@@ -194,7 +194,7 @@ function printRegister(ctx, rows, label) {
       <table class="doc-table">
         <thead><tr><th>No.</th><th>Date</th><th>Client</th><th class="num">Taxable</th><th class="num">GST</th><th class="num">Total</th><th class="num">Balance</th><th>Status</th></tr></thead>
         <tbody>
-          ${rows.map(({ inv, t }) => html`<tr><td>${inv.no}</td><td>${formatDate(inv.date)}</td><td>${partyName(state, "client", inv.clientId, inv)}</td><td class="num">${money2(t.subtotal)}</td><td class="num">${money2(t.gst)}</td><td class="num">${money2(t.total)}</td><td class="num">${money2(t.balance)}</td><td>${invoiceStatus(inv, t, ctx.today())[1]}</td></tr>`)}
+          ${rows.map(({ inv, t }) => html`<tr><td class="nowrap">${inv.no}</td><td class="nowrap">${formatDate(inv.date)}</td><td>${partyName(state, "client", inv.clientId, inv)}</td><td class="num">${money2(t.subtotal)}</td><td class="num">${money2(t.gst)}</td><td class="num">${money2(t.total)}</td><td class="num">${money2(t.balance)}</td><td>${invoiceStatus(inv, t, ctx.today())[1]}</td></tr>`)}
           <tr class="total"><td colspan="3">Total, ${rows.length} invoices</td><td class="num">${money2(sum("subtotal"))}</td><td class="num">${money2(sum("gst"))}</td><td class="num">${money2(sum("total"))}</td><td class="num">${money2(sum("balance"))}</td><td></td></tr>
         </tbody>
       </table>

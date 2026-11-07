@@ -113,7 +113,7 @@ export default {
           ${kpi({ label: "Cash and bank", value: m0(d.totalMoney), ic: "bank", href: "banks", tone: d.totalMoney < 0 ? "bad" : "", sub: `Cash ${m0(d.cashTotal)}` })}
           ${kpi({ label: "Clients owe you", value: m0(d.receivables), ic: "receipt", href: "reports/receivable", tone: d.receivables ? "warn" : "", sub: d.overdueReceivables.length ? `${d.overdueReceivables.length} overdue` : "" })}
           ${kpi({ label: "You owe suppliers", value: m0(d.payables), ic: "truck", href: "reports/payable", tone: d.payables ? "warn" : "", sub: d.overduePayables.length ? `${d.overduePayables.length} overdue` : "" })}
-          ${kpi({ label: `Profit, ${monthLabel(d.month, { short: true })}`, value: m0(d.profit), ic: "chart", href: "reports/profit", tone: d.profit < 0 ? "bad" : "good" })}
+          ${kpi({ label: `Profit, ${monthLabel(d.month, { short: true })}`, value: m0(d.profit), ic: "chart", href: "reports/profit", tone: d.profit < 0 ? "bad" : d.profit > 0 ? "good" : "" })}
           ${payroll ? kpi({ label: "Salaries to pay", value: m0(d.salariesToPay), ic: "wallet", href: "salary", tone: d.salariesToPay ? "warn" : "" }) : ""}
           ${stockOn ? kpi({ label: "Stock value", value: m0(d.stockValue), ic: "box", href: "stock", sub: d.lowStock.length ? `${d.lowStock.length} low` : "", tone: d.lowStock.length ? "warn" : "" }) : ""}
         </div>

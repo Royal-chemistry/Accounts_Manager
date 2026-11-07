@@ -85,7 +85,7 @@ function profitReport(ctx, range) {
       <div class="kpis">
         ${kpi({ label: "Revenue", value: ctx.money(p.revenue.total, { decimals: 0 }), ic: "arrow-in" })}
         ${kpi({ label: "Spending", value: ctx.money(p.costOfSales + p.expenses.total + p.staffCost + p.loanInterest, { decimals: 0 }), ic: "arrow-out" })}
-        ${kpi({ label: "Net profit", value: ctx.money(p.netProfit, { decimals: 0 }), ic: "chart", tone: p.netProfit < 0 ? "bad" : "good" })}
+        ${kpi({ label: "Net profit", value: ctx.money(p.netProfit, { decimals: 0 }), ic: "chart", tone: p.netProfit < 0 ? "bad" : p.netProfit > 0 ? "good" : "" })}
       </div>
       ${showMonths ? html`<section class="card"><h2 class="card-title">Revenue and spending by month</h2><div data-chart></div></section>` : ""}
       <section class="card">

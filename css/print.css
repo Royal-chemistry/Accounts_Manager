@@ -37,6 +37,7 @@
 .doc-table thead { display: table-header-group; }
 .doc-table tr { break-inside: avoid; }
 .doc-table .num, .doc-table .col-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.doc-table .nowrap { white-space: nowrap; }
 .doc-table .total td { font-weight: 700; background: #f2f2f2; }
 .doc-table .group td { font-weight: 700; background: #fafafa; }
 .doc-words { margin: 6px 0; font-size: 9.5pt; }
