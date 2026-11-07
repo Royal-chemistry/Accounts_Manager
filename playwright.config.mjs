@@ -3,6 +3,10 @@ import { defineConfig } from "@playwright/test";
 const CI = !!process.env.CI;
 // Locally, reuse the Chrome already on the machine instead of downloading a browser.
 const browser = CI ? {} : { channel: "chrome" };
+// Firefox and Safari's engine run a short smoke test in CI only, so nobody has to install them to contribute.
+const otherBrowsers = CI
+  ? ["firefox", "webkit"].map((name) => ({ name, testMatch: /smoke\.spec/, use: { browserName: name, viewport: { width: 1280, height: 800 } } }))
+  : [];
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -21,6 +25,8 @@ export default defineConfig({
     trace: "retain-on-failure",
     timezoneId: "Asia/Kolkata",
     locale: "en-IN",
+    // Off except in the offline tests, so every other test talks straight to the server.
+    serviceWorkers: "block",
   },
   projects: [
     // User flows run on a desktop and a phone.
@@ -28,6 +34,7 @@ export default defineConfig({
     { name: "phone", testIgnore: /pages\.spec/, use: { ...browser, viewport: { width: 375, height: 812 }, hasTouch: true, isMobile: true } },
     // The page matrix sets its own sizes and themes.
     { name: "pages", testMatch: /pages\.spec/, use: { ...browser } },
+    ...otherBrowsers,
   ],
   webServer: {
     command: "node tests/e2e/server.mjs",

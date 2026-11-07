@@ -9,7 +9,7 @@ import { navigate, onRouteChange, parseHash } from "./ui/router.js";
 import { renderRescue, showCrash } from "./ui/screens.js";
 import { createShell, showShortcuts } from "./ui/shell.js";
 import { watchSystemTheme } from "./ui/theme.js";
-import { toast } from "./ui/toast.js";
+import { pressUndo, toast } from "./ui/toast.js";
 
 import advances from "./pages/advances.js";
 import attendance from "./pages/attendance.js";
@@ -107,7 +107,8 @@ function startApp() {
     if (e.key && store.syncFromOtherTab(e.key, e.newValue)) toast("Updated from another tab", { kind: "info" });
   });
 
-  renderPage(parseHash());
+  // Focus only moves when changing page. On first load it stays at the top, so the first Tab finds the skip link.
+  renderPage(parseHash(), { focus: false });
 }
 
 // Keyboard shortcuts, ignored while typing.
@@ -127,8 +128,15 @@ document.addEventListener("keydown", (e) => {
   } else if (e.key.toLowerCase() === "n") {
     const add = $("[data-add]");
     if (add) { e.preventDefault(); add.click(); }
+  } else if (e.key.toLowerCase() === "u") {
+    if (pressUndo()) e.preventDefault();
   } else if (e.key.toLowerCase() === "g") goPending = true;
 });
+
+// Lets the app open without a connection. Service workers aren't allowed on pages opened from a file.
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
 
 watchSystemTheme();
 

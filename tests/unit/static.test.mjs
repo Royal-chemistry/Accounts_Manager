@@ -29,6 +29,12 @@ test("every browser test runs on the fixed date, so results can't depend on the 
   }
 });
 
+test("the offline list in sw.js matches the files on disk", () => {
+  const listed = [...read("sw.js").matchAll(/^\s+"([^"]+)",$/gm)].map((m) => m[1]).filter((f) => f !== "./");
+  const onDisk = ["index.html", ...walk("js", [".js"]), ...walk("css", [".css"]), ...walk("assets", [".svg", ".woff2"])].map((p) => p.replaceAll("\\", "/"));
+  assert.deepEqual([...listed].sort(), [...onDisk].sort());
+});
+
 test("no blocking browser popups anywhere", () => {
   for (const file of JS()) {
     const code = read(file).split("\n").filter((l) => !l.trim().startsWith("//")).join("\n");

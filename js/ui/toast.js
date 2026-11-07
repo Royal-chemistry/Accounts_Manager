@@ -51,3 +51,13 @@ export function toast(message, { kind = "success", action = null, duration = 400
 export const UNDO_MS = 8000;
 
 export const undoToast = (message, onUndo) => toast(message, { action: { label: "Undo", onClick: onUndo }, duration: UNDO_MS });
+
+/**
+ * Presses the newest Undo on screen, if there is one. Tabbing to it across a whole page
+ * can't be done in 8 seconds, so keyboard users get a shortcut.
+ */
+export function pressUndo() {
+  const undo = [...(region?.querySelectorAll("[data-toast-action]") || [])].filter((b) => b.textContent.trim() === "Undo").at(-1);
+  undo?.click();
+  return !!undo;
+}
