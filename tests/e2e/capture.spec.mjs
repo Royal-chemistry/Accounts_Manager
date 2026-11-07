@@ -100,6 +100,36 @@ test("suppliers, purchases and settling up", async ({ page }, info) => {
   await shot("purchase-form");
 });
 
+for (const theme of ["light", "dark"]) {
+  test(`dashboard and reports in ${theme}`, async ({ page }, info) => {
+    test.setTimeout(90_000);
+    const shot = (name, opts = {}) => page.screenshot({ path: `${SHOTS}/${info.project.name}-${theme}-${name}.png`, ...opts });
+    await page.addInitScript(() => { window.print = () => {}; });
+    await seed(page, { data: sample(TODAY), theme });
+    await page.goto("/index.html#/dashboard");
+    await expect(page.locator(".chart")).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    await shot("dashboard", { fullPage: true });
+    await page.goto("/index.html#/reports/profit");
+    await page.getByLabel("Period").selectOption("this-fy");
+    await expect(page.locator(".chart")).toBeVisible();
+    await page.locator(".chart-hit").first().focus();
+    await expect(page.locator(".chart-tip")).toBeVisible();
+    await shot("report-profit", { fullPage: true });
+    await page.getByLabel("Period").selectOption("last-month");
+    for (const tab of ["cash", "receivable", "payable", "gst", "stock", "staff"]) {
+      await page.goto(`/index.html#/reports/${tab}`);
+      await expect(page.locator('.tab[aria-current="page"]')).toHaveAttribute("href", `#/reports/${tab}`);
+      await shot(`report-${tab}`, { fullPage: true });
+    }
+    await page.goto("/index.html#/reports/gst");
+    await page.getByRole("button", { name: "Print or save as PDF" }).click();
+    await page.emulateMedia({ media: "print" });
+    await shot("report-print");
+    await page.emulateMedia({ media: "screen" });
+  });
+}
+
 test("stock", async ({ page }, info) => {
   const shot = (name, opts = {}) => page.screenshot({ path: `${SHOTS}/${info.project.name}-${name}.png`, ...opts });
   await seed(page, { data: sample(TODAY), theme: "light" });
