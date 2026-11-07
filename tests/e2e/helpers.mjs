@@ -76,4 +76,4 @@ export async function seed(page, { v1, data, theme, raw = {} } = {}) {
 /** Reads the app's saved data. */
 export const savedData = (page, key = "accounts-manager:data") => page.evaluate((k) => JSON.parse(localStorage.getItem(k)), key);
 
-export const ALL_PAGES = ["dashboard", "clients", "invoices", "suppliers", "purchases", "cashbook", "recurring", "banks", "staff", "attendance", "salary", "advances", "stock", "reports", "recycle-bin", "settings", "styleguide"];
+export const ALL_PAGES = ["dashboard", "search", "clients", "invoices", "suppliers", "purchases", "cashbook", "recurring", "banks", "staff", "attendance", "salary", "advances", "stock", "reports", "recycle-bin", "settings", "styleguide"];

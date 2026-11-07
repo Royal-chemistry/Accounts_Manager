@@ -25,14 +25,13 @@ test("the headline figures match the calculations", async ({ page }) => {
   expect(problems).toEqual([]);
 });
 
-test("what needs attention, what's due and low stock each link to the right place", async ({ page }) => {
+test("what's up next and low stock each link to the right place", async ({ page }) => {
   const s = sample(TODAY);
   const d = dashboardSummary(s, TODAY);
   expect(d.overdueReceivables.length).toBeGreaterThan(0);
   expect(d.lowStock.length).toBeGreaterThan(0);
   await open(page, s);
-  const attention = page.locator(".card", { hasText: "Needs attention" });
-  await expect(attention).toContainText("late");
+  await expect(page.getByTestId("up-next-list")).toContainText("late");
   const low = page.getByTestId("low-stock");
   await expect(low.getByRole("link").nth(1)).toHaveAttribute("href", `#/stock/${d.lowStock[0].item.id}`);
   await low.getByRole("link", { name: "Stock", exact: true }).click();
@@ -110,7 +109,7 @@ test.describe("the backup reminder", () => {
     await seed(page, { data: sampleV2() });
     await page.goto("/index.html#/settings/data");
     await page.getByRole("button", { name: "Explore sample data" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     await expect(page.locator("[data-banner]")).toContainText(/sample/i);
     await expect(page.locator(".backup-nudge")).toHaveCount(0);
   });
