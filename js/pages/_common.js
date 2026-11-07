@@ -1,11 +1,15 @@
 // Small building blocks shared by the pages.
+import { artTone } from "../core/artwork.js";
+import { artwork } from "../ui/artwork.js";
 import { html } from "../ui/dom.js";
 import { icon } from "../ui/icons.js";
 
-export function pageHead({ title, sub, actions, back }) {
+/** art names someone or something: their artwork leads the page, and its colour washes across the top, as on a Music artist page. */
+export function pageHead({ title, sub, actions, back, art }) {
   return html`
     ${back ? html`<a class="page-back" href="#/${back.page}">${icon("arrow-left", { cls: "icon-sm" })}${back.label}</a>` : ""}
-    <header class="page-head">
+    <header class="page-head ${art ? `page-head-art art-${artTone(art)}` : ""}">
+      ${art ? artwork(art, "xl") : ""}
       <div class="grow">
         <h1 id="page-title" tabindex="-1">${title}</h1>
         ${sub ? html`<p class="page-sub">${sub}</p>` : ""}

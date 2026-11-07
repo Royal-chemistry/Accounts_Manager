@@ -3,6 +3,7 @@ import { formatDate, monthLabel, monthOf } from "../core/dates.js";
 import { uid } from "../core/ids.js";
 import { num, round2, sumMoney } from "../core/money.js";
 import { cycleStatus, FREQUENCIES, monthlyEquivalent } from "../core/recurring.js";
+import { withArt } from "../ui/artwork.js";
 import { $, html, on, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -56,7 +57,7 @@ function recurringForm(ctx, item = null) {
   });
 }
 
-function payForm(ctx, item) {
+export function payForm(ctx, item) {
   const status = cycleStatus(item, ctx.today());
   openForm({
     ctx,
@@ -144,7 +145,7 @@ export default {
       }],
       rowClass: (r) => (r.item.active === false ? "row-inactive" : ""),
       columns: [
-        { key: "name", label: "Name", sortable: true, mobile: "title", value: (r) => r.item.name, render: (r) => html`<span class="cell-title">${r.item.name}</span><span class="cell-sub">${r.item.category}${r.item.variable ? " · Varies" : ""}${r.item.note ? ` · ${r.item.note}` : ""}</span>` },
+        { key: "name", label: "Name", sortable: true, mobile: "title", value: (r) => r.item.name, render: (r) => withArt(r.item.name, html`<span class="cell-title">${r.item.name}</span><span class="cell-sub">${r.item.category}${r.item.variable ? " · Varies" : ""}${r.item.note ? ` · ${r.item.note}` : ""}</span>`) },
         { key: "due", label: "Next due", sortable: true, mobile: "meta", value: (r) => r.status.due, render: (r) => formatDate(r.status.due) },
         { key: "frequency", label: "How often", mobile: "meta", value: (r) => r.item.frequency, render: (r) => FREQUENCIES[r.item.frequency]?.label || "Every month" },
         { key: "how", label: "Paid by", mobile: "hide", render: (r) => html`<span class="small">${paymentLabel(ctx.state(), r.item)}</span>` },

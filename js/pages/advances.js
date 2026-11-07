@@ -2,6 +2,7 @@
 import { formatDate, monthLabel, monthOf, dayInMonth } from "../core/dates.js";
 import { uid } from "../core/ids.js";
 import { num, sumMoney } from "../core/money.js";
+import { withArt } from "../ui/artwork.js";
 import { $, html, on, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -74,7 +75,7 @@ export default {
       search: { placeholder: "Search by name or note", text: (a) => `${name(a.staffId)} ${a.note} ${team(a.staffId)}` },
       columns: [
         { key: "date", label: "Date", sortable: true, mobile: "meta", render: (a) => formatDate(a.date) },
-        { key: "staff", label: "Staff", sortable: true, mobile: "title", value: (a) => name(a.staffId), render: (a) => html`<span class="cell-title">${name(a.staffId)}</span><span class="cell-sub">${team(a.staffId)}</span>` },
+        { key: "staff", label: "Staff", sortable: true, mobile: "title", value: (a) => name(a.staffId), render: (a) => withArt(name(a.staffId), html`<span class="cell-title">${name(a.staffId)}</span><span class="cell-sub">${team(a.staffId)}</span>`) },
         { key: "paid", label: "Paid by", mobile: "meta", render: (a) => paymentCell(ctx.state(), a) },
         { key: "note", label: "Note", mobile: "meta" },
         { key: "amount", label: "Amount", align: "num", sortable: true, mobile: "amount", value: (a) => num(a.amount), render: (a) => ctx.money(a.amount) },

@@ -26,6 +26,48 @@
   .glass, .glass-side, .glass-sheet { background: Canvas; border: 1px solid CanvasText; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
+/* Generated artwork: a squircle in a colour worked out from the name. */
+.art-1 { --art-a: var(--art-1a); --art-b: var(--art-1b); }
+.art-2 { --art-a: var(--art-2a); --art-b: var(--art-2b); }
+.art-3 { --art-a: var(--art-3a); --art-b: var(--art-3b); }
+.art-4 { --art-a: var(--art-4a); --art-b: var(--art-4b); }
+.art-5 { --art-a: var(--art-5a); --art-b: var(--art-5b); }
+.art-6 { --art-a: var(--art-6a); --art-b: var(--art-6b); }
+.art-7 { --art-a: var(--art-7a); --art-b: var(--art-7b); }
+.art-8 { --art-a: var(--art-8a); --art-b: var(--art-8b); }
+.art {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 24%;
+  background: linear-gradient(145deg, var(--art-a), var(--art-b));
+  box-shadow: inset 0 1px 0 var(--on-art-fill);
+  color: var(--on-art);
+  font-size: var(--fs-13);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+.art-md { width: 44px; height: 44px; font-size: var(--fs-16); }
+.art-lg { width: 72px; height: 72px; font-size: var(--fs-22); }
+.art-xl { width: 148px; height: 148px; font-size: 3rem; font-weight: 600; box-shadow: var(--shadow-2), inset 0 1px 0 var(--on-art-fill-strong); }
+.with-art { display: inline-flex; align-items: center; gap: var(--s-3); min-width: 0; }
+.with-art-text { display: block; min-width: 0; }
+
+/* Rows like the App Store's: artwork, name, a line of detail, and a soft pill to act on it. */
+.app-rows { display: flex; flex-direction: column; }
+.app-row { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2) 0; }
+.app-row + .app-row { border-top: 1px solid var(--border); }
+.app-row-text { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
+.app-row-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-row-sub { color: var(--text-muted); font-size: var(--fs-13); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-row-amount { flex: none; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.app-row-chevron { color: var(--text-muted); }
+.btn.btn-get { flex: none; min-width: 74px; color: var(--primary-text); font-weight: 700; }
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -260,7 +302,7 @@ input[type="date"].input, input[type="month"].input { min-width: 0; }
 /* Tables */
 .table-wrap { overflow: auto; max-height: calc(100dvh - 190px); }
 .tbl { width: 100%; border-collapse: separate; border-spacing: 0; }
-.tbl th, .tbl td { padding: 11px var(--s-3); text-align: left; vertical-align: middle; border-bottom: 1px solid var(--border); }
+.tbl th, .tbl td { padding: 11px var(--s-2); text-align: left; vertical-align: middle; border-bottom: 1px solid var(--border); }
 .tbl th:first-child, .tbl td:first-child { padding-left: var(--s-5); }
 .tbl th:last-child, .tbl td:last-child { padding-right: var(--s-5); }
 .tbl thead th {
@@ -325,7 +367,10 @@ th[aria-sort="ascending"] .icon, th[aria-sort="descending"] .icon { opacity: 1; 
   .tbl tfoot td { position: static; background: none; }
   .tbl tfoot td:not([data-mobile]) { grid-column: 1 / -1; }
   .sort-mobile { display: block; }
-  .toolbar select.input { flex: 1 1 130px; }
+  /* Search gets a full row. The filters shrink to fit their words, so the list stays near the top of the screen. */
+  .toolbar .search { flex: 1 1 100%; }
+  .toolbar select.input { flex: 1 1 calc(50% - var(--s-1)); width: 0; min-width: 0; min-height: 40px; border-radius: var(--r-pill); font-size: var(--fs-14); }
+  .toolbar select.sort-mobile { flex-basis: 100%; }
 }
 
 /* Empty states */

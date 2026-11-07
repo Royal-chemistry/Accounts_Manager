@@ -246,7 +246,7 @@ function renderStatement(root, ctx, id) {
   setHTML(root, html`
     <div class="page">
       ${pageHead({
-        title: account.name, back: { page: "banks", label: "Banks & loans" },
+        title: account.name, art: account.name, back: { page: "banks", label: "Banks & loans" },
         sub: `${account.kind === "cash" ? "Cash" : "Bank"}${account.accountNo ? ` · ${account.accountNo}` : ""}`,
         actions: html`<button type="button" class="btn" data-match-here>Match balance</button>`,
       })}

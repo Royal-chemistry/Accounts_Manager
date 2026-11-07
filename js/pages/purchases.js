@@ -6,6 +6,7 @@ import { uid } from "../core/ids.js";
 import { partyName } from "../core/ledger.js";
 import { num, round2, sumMoney } from "../core/money.js";
 import { uniqueError } from "../core/validate.js";
+import { withArt } from "../ui/artwork.js";
 import { $, downloadFile, html, on, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -143,7 +144,7 @@ function renderList(root, ctx) {
       { key: "month", label: "All months", options: [...new Set(all.map((r) => monthOf(r.bill.date)))].sort().reverse().map((m) => [m, monthLabel(m)]), test: (r, v) => monthOf(r.bill.date) === v },
     ],
     columns: [
-      { key: "no", label: "Bill", sortable: true, mobile: "title", value: (r) => r.bill.billNo, render: (r) => html`<span class="cell-title"><a href="#/purchases/${r.bill.id}">${r.bill.billNo || "No number"}</a></span><span class="cell-sub">${partyName(ctx.state(), "supplier", r.bill.supplierId, r.bill)}</span>` },
+      { key: "no", label: "Bill", sortable: true, mobile: "title", value: (r) => r.bill.billNo, render: (r) => withArt(partyName(ctx.state(), "supplier", r.bill.supplierId, r.bill), html`<span class="cell-title"><a href="#/purchases/${r.bill.id}">${r.bill.billNo || "No number"}</a></span><span class="cell-sub">${partyName(ctx.state(), "supplier", r.bill.supplierId, r.bill)}</span>`) },
       { key: "date", label: "Date", sortable: true, mobile: "meta", value: (r) => r.bill.date, render: (r) => html`${formatDate(r.bill.date)}${r.bill.due ? html`<span class="cell-sub">Due ${formatDate(r.bill.due)}</span>` : ""}` },
       { key: "total", label: "Total", align: "num", sortable: true, mobile: "amount", value: (r) => r.t.total, render: (r) => money(r.t.total) },
       { key: "paid", label: "Paid", align: "num", sortable: true, value: (r) => r.t.received, render: (r) => money(r.t.received) },
@@ -181,7 +182,7 @@ function renderDetail(root, ctx, id) {
   setHTML(root, html`
     <div class="page">
       ${pageHead({
-        title: bill.billNo ? `Purchase ${bill.billNo}` : "Purchase",
+        title: bill.billNo ? `Purchase ${bill.billNo}` : "Purchase", art: partyName(ctx.state(), "supplier", bill.supplierId, bill),
         back: { page: "purchases", label: "Purchases" },
         sub: html`${partyName(state, "supplier", bill.supplierId, bill)} · ${formatDate(bill.date)} ${statusBadge(bill, t, ctx.today())}`,
         actions: html`

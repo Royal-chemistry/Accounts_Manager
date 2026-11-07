@@ -6,6 +6,7 @@ import { uid } from "../core/ids.js";
 import { num, round2, sumMoney } from "../core/money.js";
 import { partyName } from "../core/ledger.js";
 import { uniqueError } from "../core/validate.js";
+import { withArt } from "../ui/artwork.js";
 import { $, downloadFile, html, on, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -240,7 +241,7 @@ function renderList(root, ctx) {
       { key: "month", label: "All months", options: [...new Set(all.map((r) => monthOf(r.inv.date)))].sort().reverse().map((m) => [m, monthLabel(m)]), test: (r, v) => monthOf(r.inv.date) === v },
     ],
     columns: [
-      { key: "no", label: "Number", sortable: true, mobile: "title", value: (r) => r.inv.no, render: (r) => html`<span class="cell-title"><a href="#/invoices/${r.inv.id}">${r.inv.no}</a></span><span class="cell-sub">${partyName(ctx.state(), "client", r.inv.clientId, r.inv)}</span>` },
+      { key: "no", label: "Number", sortable: true, mobile: "title", value: (r) => r.inv.no, render: (r) => withArt(partyName(ctx.state(), "client", r.inv.clientId, r.inv), html`<span class="cell-title"><a href="#/invoices/${r.inv.id}">${r.inv.no}</a></span><span class="cell-sub">${partyName(ctx.state(), "client", r.inv.clientId, r.inv)}</span>`) },
       { key: "date", label: "Date", sortable: true, mobile: "meta", value: (r) => r.inv.date, render: (r) => html`${formatDate(r.inv.date)}${r.inv.due ? html`<span class="cell-sub">Due ${formatDate(r.inv.due)}</span>` : ""}` },
       { key: "total", label: "Total", align: "num", sortable: true, mobile: "amount", value: (r) => r.t.total, render: (r) => money(r.t.total) },
       { key: "received", label: "Received", align: "num", sortable: true, value: (r) => r.t.received + r.t.tds, render: (r) => money(r.t.received + r.t.tds) },
@@ -284,7 +285,7 @@ function renderDetail(root, ctx, id) {
   setHTML(root, html`
     <div class="page">
       ${pageHead({
-        title: `Invoice ${inv.no}`,
+        title: `Invoice ${inv.no}`, art: partyName(ctx.state(), "client", inv.clientId, inv),
         back: { page: "invoices", label: "Invoices" },
         sub: html`${partyName(state, "client", inv.clientId, inv)} · ${formatDate(inv.date)} ${statusBadge(inv, t, ctx.today())}`,
         actions: html`

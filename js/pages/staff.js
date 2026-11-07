@@ -5,6 +5,7 @@ import { uid } from "../core/ids.js";
 import { sumMoney } from "../core/money.js";
 import { attendanceSummary, payFor, salaryPaymentFor, staffFromCSV, staffTemplateRows } from "../core/payroll.js";
 import { ifscError, phoneError, uniqueError } from "../core/validate.js";
+import { withArt } from "../ui/artwork.js";
 import { $, downloadFile, html, on, pickFile, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -118,7 +119,7 @@ function renderList(root, ctx) {
     ],
     rowClass: (s) => (s.active === false ? "row-inactive" : ""),
     columns: [
-      { key: "name", label: "Name", sortable: true, mobile: "title", render: (s) => html`<span class="cell-title"><a href="#/staff/${s.id}">${s.name || "(no name)"}</a></span><span class="cell-sub">${[s.code, s.position].filter(Boolean).join(" · ")}</span>` },
+      { key: "name", label: "Name", sortable: true, mobile: "title", render: (s) => withArt(s.name, html`<span class="cell-title"><a href="#/staff/${s.id}">${s.name || "(no name)"}</a></span><span class="cell-sub">${[s.code, s.position].filter(Boolean).join(" · ")}</span>`) },
       { key: "team", label: "Team", sortable: true, mobile: "meta" },
       { key: "salary", label: "Monthly salary", align: "num", sortable: true, mobile: "amount", value: (s) => Number(s.salary) || 0, render: (s) => ctx.money(s.salary || 0) },
       { key: "payto", label: "Pay to", mobile: "meta", render: (s) => (s.account ? html`<span class="small num">A/c ${s.account}</span>` : s.upi ? html`<span class="small">${s.upi}</span>` : html`<span class="badge badge-warning">Missing</span>`) },
@@ -149,7 +150,7 @@ function renderDetail(root, ctx, id) {
   setHTML(root, html`
     <div class="page">
       ${pageHead({
-        title: person.name || "(no name)",
+        title: person.name || "(no name)", art: person.name,
         back: { page: "staff", label: "Staff" },
         sub: [person.code, person.position, person.team].filter(Boolean).join(" · "),
         actions: html`
