@@ -25,12 +25,13 @@ import recycleBin from "./pages/recycle-bin.js";
 import salary from "./pages/salary.js";
 import settings from "./pages/settings.js";
 import staff from "./pages/staff.js";
+import stock from "./pages/stock.js";
 import styleguide from "./pages/styleguide.js";
 import { placeholder } from "./pages/placeholder.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks,
-  placeholder("stock", "Stock", "box"), placeholder("reports", "Reports", "chart"),
+  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks, stock,
+  placeholder("reports", "Reports", "chart"),
 ].map((p) => [p.id, p]));
 
 const root = document.getElementById("app");

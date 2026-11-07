@@ -19,7 +19,18 @@ export default {
           ${kpi({ label: "You owe suppliers", value: ctx.money(d.payables, { decimals: 0 }), ic: "truck", href: "suppliers", tone: d.payables ? "warn" : "" })}
           ${kpi({ label: `Profit, ${monthLabel(d.month)}`, value: ctx.money(d.profit, { decimals: 0 }), ic: "chart", href: "reports", tone: d.profit < 0 ? "bad" : "good" })}
           ${kpi({ label: "Salaries to pay", value: ctx.money(d.salariesToPay, { decimals: 0 }), ic: "wallet", href: "salary", tone: d.salariesToPay ? "warn" : "" })}
+          ${state.settings.modules?.stock ? kpi({ label: "Stock value", value: ctx.money(d.stockValue, { decimals: 0 }), ic: "box", href: "stock", tone: d.lowStock.length ? "warn" : "", sub: d.lowStock.length ? `${d.lowStock.length} low` : "" }) : ""}
         </div>
+        ${state.settings.modules?.stock && d.lowStock.length ? html`
+          <section class="card" data-testid="low-stock">
+            <div class="card-head"><h2>Low stock</h2><a class="small" href="#/stock">Stock</a></div>
+            <div class="lines">
+              ${d.lowStock.map((r) => html`<div class="line">
+                <span class="line-label wrap-anywhere"><a class="plain-link" href="#/stock/${r.item.id}">${r.item.name}</a> <span class="badge badge-${r.negative ? "danger" : "warning"}">${r.negative ? "Below zero" : "Low"}</span></span>
+                <span class="line-value">${r.onHand} ${r.item.unit || ""}</span>
+              </div>`)}
+            </div>
+          </section>` : ""}
       </div>`);
   },
 };

@@ -100,6 +100,24 @@ test("suppliers, purchases and settling up", async ({ page }, info) => {
   await shot("purchase-form");
 });
 
+test("stock", async ({ page }, info) => {
+  const shot = (name, opts = {}) => page.screenshot({ path: `${SHOTS}/${info.project.name}-${name}.png`, ...opts });
+  await seed(page, { data: sample(TODAY), theme: "light" });
+  await page.goto("/index.html#/stock");
+  await expect(page.locator("tbody tr").first()).toBeVisible();
+  await shot("stock", { fullPage: true });
+  await page.goto("/index.html#/stock/item-5");
+  await expect(page.locator("h1")).toHaveText("Delivery bags (bundle)");
+  await shot("stock-item", { fullPage: true });
+  await page.getByRole("button", { name: "Stock in" }).click();
+  await expect(page.locator("dialog")).toBeVisible();
+  await shot("stock-in");
+  await page.locator("dialog").getByRole("button", { name: "Cancel" }).click();
+  await page.goto("/index.html#/dashboard");
+  await expect(page.getByTestId("low-stock")).toBeVisible();
+  await shot("dashboard-low-stock", { fullPage: true });
+});
+
 for (const tab of ["payroll", "categories", "data"]) {
   test(`settings ${tab}`, async ({ page }, info) => {
     await seed(page, { data: sampleV2(), theme: "light" });
