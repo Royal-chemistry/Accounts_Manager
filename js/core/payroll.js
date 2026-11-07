@@ -99,6 +99,53 @@ export const staffCost = (pay) => pay.gross - pay.food - pay.kit - pay.other;
 
 export const salaryPaymentFor = (state, staffId, month) => state.salaryPayments.find((p) => p.staffId === staffId && p.month === month);
 
+/** Turns imported CSV rows into staff records. Old headings like "guard" and "site" still work. */
+export function staffFromCSV(rows, makeId) {
+  const people = [];
+  let skipped = 0;
+  for (const r of rows) {
+    const name = r.name || r.full_name || r.staff || r.employee || r.guard;
+    if (!name) { skipped++; continue; }
+    people.push({
+      id: makeId(), name, code: r.code || r.employee_code || "", team: r.team || r.branch || r.site || r.department || "", position: r.position || r.role || "", joinedOn: "", active: true,
+      salary: Number(String(r.salary || r.monthly_salary || r.basic || 0).replace(/[^0-9.]/g, "")) || 0,
+      bank: r.bank || r.bank_name || "", account: r.account || r.account_no || r.account_number || "", ifsc: (r.ifsc || "").toUpperCase(), upi: r.upi || r.upi_id || "", phone: r.phone || r.mobile || "",
+    });
+  }
+  return { people, skipped };
+}
+
+const STAFF_TEMPLATE = [["Name", "Team", "Salary", "Bank", "Account", "IFSC", "UPI", "Phone"], ["Rajesh K", "Main shop", 15500, "State Bank of India", "00000000000", "SBIN0000000", "", "9800000000"]];
+export const staffTemplateRows = () => STAFF_TEMPLATE;
+
+/** Rows for the salary sheet CSV. */
+export function salarySheetRows(rows) {
+  const t = totals(rows.map((x) => x.pay));
+  return [
+    ["Name", "Team", "Monthly salary", "Days worked", "Earned", "Extra shifts", "Bonus", "Gross", "Advance", "Food", "Kit", "Other", "PF", "ESI", "Net pay", "Status", "Paid on"],
+    ...rows.map(({ staff, pay, paid, status }) => [staff.name, staff.team, staff.salary, pay.days, pay.base, pay.extra, pay.bonus, pay.gross, pay.advance, pay.food, pay.kit, pay.other, pay.pf, pay.esi, pay.net, status, paid?.date || ""]),
+    ["TOTAL", "", "", t.days, t.base, t.extra, t.bonus, t.gross, t.advance, t.food, t.kit, t.other, t.pf, t.esi, t.net, "", ""],
+  ];
+}
+
+/** Rows for a bank transfer list: only people with money still to come. */
+export function payoutRows(rows, remark) {
+  return [
+    ["Beneficiary name", "Team", "Amount", "Account no.", "IFSC", "Bank", "UPI ID", "Phone", "Remarks"],
+    ...rows.filter((r) => r.status === "unpaid").map(({ staff, pay }) => [staff.name, staff.team, pay.net, staff.account, staff.ifsc, staff.bank, staff.upi, staff.phone, remark]),
+  ];
+}
+
+/** A message for pasting into WhatsApp. */
+export function whatsappSummary(rows, { business, monthName, money }) {
+  const t = totals(rows.map((x) => x.pay));
+  return [
+    `*${business || "Salary"} — ${monthName}*`, "",
+    ...rows.map(({ staff, pay }) => `${staff.name}${staff.team ? ` (${staff.team})` : ""}: ${pay.days} days → *${money(pay.net)}*${pay.advance ? ` (adv ${money(pay.advance)})` : ""}`),
+    "", `Total net: *${money(t.net)}* for ${rows.length} staff`,
+  ].join("\n");
+}
+
 /** The salary sheet for a month: active staff, plus anyone inactive who has figures that month. */
 export function payrollRows(state, month) {
   return state.staff
