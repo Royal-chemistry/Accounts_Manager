@@ -29,6 +29,19 @@ test("upgrade screen", async ({ page }, info) => {
   await page.screenshot({ path: `${SHOTS}/${info.project.name}-upgrade.png`, fullPage: true });
 });
 
+test("pay sheet and payslip", async ({ page }, info) => {
+  await page.addInitScript(() => { window.print = () => {}; });
+  await seed(page, { data: sampleV2(), theme: "light" });
+  await page.goto("/index.html#/attendance/pay");
+  await expect(page.locator(".pay-sheet")).toBeVisible();
+  await page.screenshot({ path: `${SHOTS}/${info.project.name}-pay-sheet.png`, fullPage: true });
+  await page.goto("/index.html#/salary");
+  await page.getByRole("button", { name: "Print payslips" }).click();
+  await page.emulateMedia({ media: "print" });
+  await page.screenshot({ path: `${SHOTS}/${info.project.name}-payslip.png` });
+  await page.emulateMedia({ media: "screen" });
+});
+
 for (const tab of ["payroll", "categories", "data"]) {
   test(`settings ${tab}`, async ({ page }, info) => {
     await seed(page, { data: sampleV2(), theme: "light" });
