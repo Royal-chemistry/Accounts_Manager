@@ -14,7 +14,7 @@ test.describe("a new visitor", () => {
     await page.getByLabel(/^Business name/).fill("Hilltop Clinic");
     await page.getByLabel(/^Type of business/).selectOption("clinic");
     await page.getByRole("button", { name: "Get started" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     const s = await savedData(page);
     expect(s.profile.name).toBe("Hilltop Clinic");
     expect(s.profile.onboarded).toBe(true);
@@ -23,7 +23,7 @@ test.describe("a new visitor", () => {
     expect(s.categories.units).toContain("vial");
     expect(s.settings.modules.stock).toBe(true);
     await page.reload();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     expect(problems).toEqual([]);
   });
 
@@ -40,7 +40,7 @@ test.describe("a new visitor", () => {
     await page.getByLabel("Financial year starts in").selectOption("1");
     await page.getByLabel("Currency").selectOption("USD");
     await page.getByRole("button", { name: "Get started" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     await expect(page.locator(".kpis")).toContainText("$0");
     const s = await savedData(page);
     expect(s.profile.typeOther).toBe("Wedding photography");
@@ -64,7 +64,7 @@ test.describe("a new visitor", () => {
     await page.locator("[data-logo-input]").setInputFiles({ name: "logo.png", mimeType: "image/png", buffer: Buffer.from(png, "base64") });
     await expect(page.getByRole("img", { name: "Your logo" })).toBeVisible();
     await page.getByRole("button", { name: "Get started" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     const logo = (await savedData(page)).profile.logo;
     expect(logo.startsWith("data:image/")).toBe(true);
     expect(logo.length).toBeLessThan(140_000);
@@ -92,10 +92,10 @@ test.describe("an upgrading user", () => {
     await page.getByRole("button", { name: "Download a copy of your old data" }).click();
     expect((await download).suggestedFilename()).toBe("accounts-manager-old-data.json");
     await page.getByRole("button", { name: "Skip for now" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     await expect(page.locator(".kpis")).toContainText("₹8,34,481");
     await page.reload();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     expect(problems).toEqual([]);
   });
 
@@ -104,7 +104,7 @@ test.describe("an upgrading user", () => {
     await page.goto("/index.html");
     await page.getByLabel(/^Type of business/).selectOption("restaurant");
     await page.getByRole("button", { name: "Save and continue" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     const s = await savedData(page);
     expect(s.categories.expense).toContain("Stock purchase");
     expect(s.categories.expense).toContain("Raw materials");
@@ -128,7 +128,7 @@ test.describe("sample mode", () => {
   test("starts from the welcome screen, shows a banner, and leaves no trace", async ({ page }) => {
     await page.goto("/index.html");
     await page.getByRole("button", { name: "Explore with sample data" }).click();
-    await expect(page.locator("h1")).toHaveText("Dashboard");
+    await expect(page.locator("h1")).toHaveText("Today");
     await expect(page.getByText("You're exploring sample data")).toBeVisible();
     await expect(page.locator(".kpis")).toContainText("₹");
     await page.reload();

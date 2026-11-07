@@ -18,6 +18,147 @@
 .swatch-warning { background: var(--warning-soft); color: var(--warning); }
 .swatch-info { background: var(--info-soft); color: var(--info); }
 
+/* The glass slider in Settings */
+.glass-setting { max-width: 520px; }
+.range { display: block; width: 100%; min-height: var(--control); accent-color: var(--primary); }
+.range-ends { display: flex; justify-content: space-between; gap: var(--s-3); }
+
+/*
+  Detail pages lead with artwork, and its colour washes across the top of the page and blends into the content,
+  as on the new Music artist pages. The floating controls pick the colour up as it passes beneath them.
+*/
+.page-head-art { position: relative; align-items: center; justify-content: flex-start; gap: var(--s-5); padding-block: var(--s-2) var(--s-4); isolation: isolate; }
+.page-head-art::before {
+  content: "";
+  position: absolute;
+  inset: -130px calc(var(--s-8) * -1) -24px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--art-a) 20%, transparent), color-mix(in srgb, var(--art-b) 20%, transparent) 55%, transparent);
+}
+.page-head-art .art-xl { width: 120px; height: 120px; font-size: 2.5rem; }
+.page-head-art .grow { flex: 1 1 260px; }
+.page-head-art .page-actions { flex: 0 1 auto; }
+.page-back { position: relative; z-index: 1; }
+@media (max-width: 767px) {
+  .page-head-art { flex-direction: column; align-items: center; text-align: center; }
+  .page-head-art::before { inset-inline: calc(var(--s-4) * -1); }
+  .page-head-art .art-xl { width: 104px; height: 104px; font-size: 2.125rem; }
+  .page-head-art .grow { flex: none; width: 100%; }
+}
+
+/* Today */
+.today-date { margin-bottom: -2px; color: var(--text-muted); font-size: var(--fs-13); font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+.today .page-head { margin-bottom: 0; }
+.today-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 4fr); gap: var(--s-4); }
+.kpis-today { grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: stretch; }
+@media (max-width: 1179px) { .today-top { grid-template-columns: minmax(0, 1fr); } .kpis-today { grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); } }
+@media (max-width: 767px) { .kpis-today { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* The story at the top of Today, like a card on the App Store's Today page. */
+.story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  padding: var(--s-6);
+  border-radius: var(--r-4);
+  background: linear-gradient(150deg, var(--art-a), var(--art-b));
+  color: var(--on-art);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+  isolation: isolate;
+}
+/* A brighter pool of the same colour, so the card has depth rather than a flat gradient. */
+.story::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20% auto auto;
+  z-index: -1;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--on-art-fill-strong), transparent 68%);
+}
+.story-eyebrow { font-size: var(--fs-13); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.story-title { margin-top: var(--s-2); max-width: 15em; font-size: var(--fs-34); line-height: 1.1; font-weight: 800; letter-spacing: -0.024em; text-wrap: balance; }
+.story-detail { margin-top: var(--s-2); max-width: 32em; font-size: var(--fs-16); }
+.story-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; margin-top: auto; padding-top: var(--s-5); }
+.story-action { min-height: 44px; padding: 0 var(--s-5); background: var(--on-art); color: var(--on-art-ink); font-weight: 700; }
+.story-action:hover { background: var(--on-art); }
+.story .btn:focus-visible { outline-color: var(--on-art); }
+.faces { display: inline-flex; align-items: center; }
+.faces .art, .face-more { width: 40px; height: 40px; border: 2px solid var(--on-art-fill-strong); border-radius: 50%; }
+.faces > * + * { margin-left: -10px; }
+.face-more { display: inline-flex; align-items: center; justify-content: center; background: var(--on-art-ink); color: var(--on-art); font-size: var(--fs-12); font-weight: 700; }
+@media (max-width: 767px) { .story { min-height: 250px; padding: var(--s-5); } .story-title { font-size: var(--fs-28); } }
+
+/* Shelves that scroll sideways, like Music's. */
+.shelf { min-width: 0; }
+.shelf-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-2); }
+.shelf-all { display: inline-flex; align-items: center; gap: 2px; color: var(--primary-text); font-weight: 600; text-decoration: none; }
+.shelf-all:hover { text-decoration: underline; }
+.shelf-track { display: flex; gap: var(--s-3); padding: 2px 2px var(--s-3); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.shelf-card { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 0 0 168px; padding: var(--s-4) var(--s-3); border-radius: var(--r-3); background: var(--surface); box-shadow: var(--shadow-1); scroll-snap-align: start; text-align: center; }
+.shelf-link { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); width: 100%; color: inherit; text-decoration: none; }
+.shelf-link:hover .shelf-name { color: var(--primary-text); }
+.shelf-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; min-height: 2.6em; overflow: hidden; font-weight: 600; line-height: 1.3; }
+.shelf-amount { margin-bottom: var(--s-2); font-family: var(--font-figures); font-size: var(--fs-18); font-weight: 700; }
+
+/* Search */
+.search-box { position: relative; display: flex; align-items: center; }
+.search-box > .icon { position: absolute; left: var(--s-4); color: var(--text-muted); pointer-events: none; }
+.search-box .input { min-height: 48px; padding-left: calc(var(--s-4) + 18px + var(--s-2)); border-radius: var(--r-pill); font-size: var(--fs-16); }
+
+/* The Up Next sheet: colour from the item's artwork moves behind everything, like Music's Now Playing. */
+.modal-now {
+  width: min(460px, calc(100vw - 32px));
+  background: linear-gradient(160deg, var(--art-a), var(--art-b));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: var(--on-art);
+  isolation: isolate;
+  transition: --art-a 700ms ease, --art-b 700ms ease;
+}
+.modal-now::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: -2;
+  background:
+    radial-gradient(38% 38% at 28% 30%, color-mix(in srgb, var(--art-a) 70%, var(--on-art)), transparent 72%),
+    radial-gradient(42% 42% at 74% 66%, color-mix(in srgb, var(--art-b) 70%, var(--on-art)), transparent 72%);
+  animation: now-drift 22s ease-in-out infinite alternate;
+}
+.modal-now::after { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--art-dim); pointer-events: none; }
+@keyframes now-drift { to { transform: rotate(40deg) scale(1.15); } }
+.modal-now .modal-head h2 { color: var(--on-art); }
+.modal-now .modal-head .icon-btn { background: var(--on-art-fill); color: var(--on-art); }
+.modal-now .modal-head .icon-btn:hover { background: var(--on-art-fill-strong); }
+.modal-now :focus-visible { outline-color: var(--on-art); }
+.now { display: flex; flex-direction: column; align-items: center; padding: var(--s-2) 0 var(--s-4); text-align: center; }
+.now .art { background: linear-gradient(145deg, color-mix(in srgb, var(--art-a) 85%, var(--on-art)), var(--art-b)); }
+.now-name { margin-top: var(--s-5); font-size: var(--fs-22); font-weight: 700; line-height: 1.2; letter-spacing: -0.012em; overflow-wrap: anywhere; }
+.now-detail { margin-top: 2px; }
+.now-amount { margin-top: var(--s-3); font-family: var(--font-figures); font-size: var(--fs-34); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.now-when { margin-top: 2px; font-weight: 600; }
+.now-actions { display: flex; align-items: center; gap: var(--s-2); margin-top: var(--s-5); }
+.now-primary { min-width: 150px; min-height: 48px; background: var(--on-art); color: var(--on-art-ink); font-size: var(--fs-16); font-weight: 700; }
+.now-primary:hover { background: var(--on-art); }
+.now-actions .icon-btn { width: 48px; height: 48px; background: var(--on-art-fill); color: var(--on-art); }
+.now-actions .icon-btn:hover { background: var(--on-art-fill-strong); }
+.now-done { display: flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 50%; background: var(--on-art-fill); }
+.now-clear .now-primary { margin-top: var(--s-5); }
+.now-then { margin-top: var(--s-2); margin-bottom: var(--s-1); font-weight: 700; }
+.now-queue { display: flex; flex-direction: column; gap: 2px; }
+.now-row { display: flex; align-items: center; gap: var(--s-3); width: 100%; padding: var(--s-2); border: 0; border-radius: var(--r-2); background: none; color: var(--on-art); text-align: left; transition: background var(--t-fast); }
+.now-row:hover { background: var(--on-art-fill); }
+.now-row-text { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; line-height: 1.25; }
+.now-row-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.now-row-sub { font-size: var(--fs-13); }
+.now-row-amount { flex: none; font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 767px) { .modal-now { width: 100%; } }
+
 /* Dashboard */
 .dash-cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--s-4); align-items: start; }
 .dash-col { display: flex; flex-direction: column; gap: var(--s-4); min-width: 0; }

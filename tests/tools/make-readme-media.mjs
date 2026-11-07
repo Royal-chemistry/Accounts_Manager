@@ -22,7 +22,7 @@ function data() {
   return s;
 }
 
-async function open(browser, { width, height, scale = 1.5, theme = "light", phone = false, video = null }) {
+async function open(browser, { width, height, scale = 1.2, theme = "light", phone = false, video = null }) {
   const context = await browser.newContext({
     viewport: { width, height }, deviceScaleFactor: scale, serviceWorkers: "block", timezoneId: "Asia/Kolkata", locale: "en-IN",
     ...(phone ? { isMobile: true, hasTouch: true } : {}),
@@ -50,12 +50,24 @@ async function screenshots(browser) {
   for (const theme of ["light", "dark"]) {
     const { context, page } = await open(browser, { width: 1440, height: 1000, theme });
     await goTo(page, "dashboard");
-    await page.locator(".chart").waitFor();
+    await page.locator(".story").waitFor();
+    await page.waitForTimeout(400);
     await page.screenshot({ path: `${OUT}/dashboard-${theme}.png` });
     await context.close();
   }
 
   const { context, page } = await open(browser, { width: 1280, height: 800 });
+  await goTo(page, "dashboard");
+  await page.getByRole("button", { name: "Start Up Next" }).click();
+  await page.locator("dialog.modal-now").waitFor();
+  await page.waitForTimeout(900);
+  await page.screenshot({ path: `${OUT}/up-next.png` });
+  await page.keyboard.press("Escape");
+
+  await goTo(page, "clients/client-1");
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/client.png` });
+
   await goTo(page, "reports/profit");
   await page.getByLabel("Period").selectOption("this-fy");
   await page.locator(".chart").waitFor();
@@ -83,9 +95,10 @@ async function screenshots(browser) {
   await page.screenshot({ path: `${OUT}/invoice.png` });
   await context.close();
 
-  const phone = await open(browser, { width: 390, height: 800, scale: 2, phone: true });
+  const phone = await open(browser, { width: 390, height: 800, scale: 1.6, phone: true });
   await goTo(phone.page, "dashboard");
-  await phone.page.locator(".chart").waitFor();
+  await phone.page.locator(".story").waitFor();
+  await phone.page.waitForTimeout(400);
   await phone.page.screenshot({ path: `${OUT}/phone.png` });
   await phone.context.close();
 }
@@ -131,41 +144,46 @@ async function demo(browser) {
   };
 
   await goTo(page, "dashboard");
-  await page.locator(".chart").waitFor();
+  await page.locator(".story").waitFor();
   await page.mouse.move(600, 300);
-  await wait(1500);
+  await wait(1600);
 
-  await click(page.getByRole("link", { name: "Invoices" }).first());
-  await page.locator("h1", { hasText: "Invoices" }).waitFor();
+  // Work through Up Next: paying moves straight on to the next item.
+  await click(page.getByRole("button", { name: "Start Up Next" }));
+  const sheet = page.locator("dialog.modal-now");
+  await sheet.waitFor();
+  await wait(1500);
+  await click(sheet.getByRole("button", { name: "Pay", exact: true }));
+  const form = page.locator("dialog").last();
+  await form.getByRole("button", { name: /^Save payment|^Pay/ }).waitFor();
   await wait(800);
+  await click(form.getByRole("button", { name: /^Save payment|^Pay/ }));
+  await wait(2000);
+  await click(sheet.getByRole("button", { name: "Skip to the next one" }));
+  await wait(1500);
+  await click(sheet.getByRole("button", { name: "Close" }));
+  await wait(700);
+
+  // Raise an invoice.
+  await click(page.locator(".nav-item", { hasText: "Invoices" }));
+  await page.locator("h1", { hasText: "Invoices" }).waitFor();
+  await wait(700);
   await click(page.getByRole("button", { name: "New invoice" }).first());
   const d = page.locator("dialog");
   await d.waitFor();
-  await wait(500);
-  await d.getByLabel(/^Client/).selectOption({ label: "Coastal Chemicals Pvt Ltd" });
   await wait(400);
+  await d.getByLabel(/^Client/).selectOption({ label: "Coastal Chemicals Pvt Ltd" });
   await type(d.getByLabel("Description").first(), "Packing material");
   await type(d.getByLabel("Quantity").first(), "200");
   await type(d.getByLabel("Rate", { exact: true }).first(), "95");
-  await wait(900);
+  await wait(700);
   await click(d.getByRole("button", { name: "Create invoice" }));
   await page.getByText(/created/).waitFor();
   await wait(1200);
 
-  const row = page.locator("tbody tr").first();
-  await click(row.getByRole("button", { name: "Receive" }));
-  await d.waitFor();
-  await wait(500);
-  await type(d.getByLabel(/^Amount received/), "10000");
-  await click(d.locator(".seg label", { hasText: "Bank" }));
-  await wait(700);
-  await click(d.getByRole("button", { name: "Save payment" }));
-  await page.getByText(/still to come/).waitFor();
-  await wait(1400);
-
-  await click(page.getByRole("link", { name: "Dashboard" }).first());
-  await page.locator(".chart").waitFor();
-  await wait(1800);
+  await click(page.locator(".nav-item", { hasText: "Today" }));
+  await page.locator(".story").waitFor();
+  await wait(1600);
 
   const video = page.video();
   await context.close();

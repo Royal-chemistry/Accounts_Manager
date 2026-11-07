@@ -9,7 +9,7 @@ test("a new business bills a client, gets paid, and sees it in the reports", asy
   await page.getByLabel(/^Business name/).fill("Smoke Test Traders");
   await page.getByLabel(/^Type of business/).selectOption("trading");
   await page.getByRole("button", { name: "Get started" }).click();
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
 
   await page.goto("/index.html#/clients");
   await page.getByRole("button", { name: "Add client" }).first().click();

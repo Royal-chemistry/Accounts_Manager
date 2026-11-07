@@ -140,7 +140,7 @@ test("shortcuts: search, the list of shortcuts, and going home", async ({ page }
   await page.keyboard.press("Escape");
   await page.keyboard.press("g");
   await page.keyboard.press("d");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
 });
 
 test("a table sorts from the keyboard, and says how it's sorted", async ({ page }) => {

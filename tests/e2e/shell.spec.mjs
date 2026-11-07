@@ -168,7 +168,7 @@ test("the keyboard shortcuts work and stay out of the way while typing", async (
   await expect(page.locator("dialog")).toBeHidden();
   await page.keyboard.press("g");
   await page.keyboard.press("d");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
 });
 
 test.describe("Recycle Bin", () => {

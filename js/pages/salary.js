@@ -4,6 +4,7 @@ import { formatDate, monthLabel } from "../core/dates.js";
 import { uid } from "../core/ids.js";
 import { sumMoney } from "../core/money.js";
 import { payoutRows, payrollRows, salarySheetRows, totals, whatsappSummary } from "../core/payroll.js";
+import { withArt } from "../ui/artwork.js";
 import { $, downloadFile, html, on, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -166,7 +167,7 @@ export default {
         { key: "status", label: "All statuses", options: Object.entries(STATUS).map(([k, [, l]]) => [k, l]), test: (r, v) => r.status === v },
       ],
       columns: [
-        { key: "name", label: "Staff", sortable: true, mobile: "title", value: (r) => r.staff.name, render: (r) => html`<span class="cell-title"><a href="#/staff/${r.staff.id}">${r.staff.name || "(no name)"}</a></span><span class="cell-sub">${r.staff.team}</span>` },
+        { key: "name", label: "Staff", sortable: true, mobile: "title", value: (r) => r.staff.name, render: (r) => withArt(r.staff.name, html`<span class="cell-title"><a href="#/staff/${r.staff.id}">${r.staff.name || "(no name)"}</a></span><span class="cell-sub">${r.staff.team}</span>`) },
         { key: "days", label: "Days", align: "num", sortable: true, value: (r) => r.pay.days, render: (r) => r.pay.days },
         { key: "earned", label: "Earned", align: "num", value: (r) => r.pay.base, render: (r) => money(r.pay.base) },
         // Columns that are zero for everyone are left out, so the sheet stays readable.

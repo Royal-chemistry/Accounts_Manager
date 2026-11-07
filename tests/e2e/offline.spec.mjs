@@ -16,12 +16,12 @@ test("the app opens, moves around and saves with no connection", async ({ page, 
   const state = sample(TODAY);
   await seed(page, { data: state });
   await page.goto("/index.html#/dashboard");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
   await waitUntilReadyOffline(page);
 
   await context.setOffline(true);
   await page.reload();
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
   await expect(page.locator(".chart")).toBeVisible();
 
   for (const [route, title] of [["invoices", "Invoices"], ["reports/gst", "Reports"], ["stock", "Stock"], ["settings/data", "Settings"]]) {
@@ -31,7 +31,7 @@ test("the app opens, moves around and saves with no connection", async ({ page, 
 
   // The bare address opens too, which is what a bookmark or Home Screen icon uses.
   await page.goto("/");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
 
   await page.goto("/index.html#/clients");
   await page.locator("[data-add]").first().click();
@@ -56,7 +56,7 @@ test("everything works from a sub-folder, the way GitHub Pages serves the live s
   });
   await seed(page, { data: sample(TODAY) });
   await page.goto("/Accounts_Manager/");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
   await expect(page.locator(".chart")).toBeVisible();
   await waitUntilReadyOffline(page);
   expect(await page.evaluate(async () => new URL((await navigator.serviceWorker.ready).scope).pathname)).toBe("/Accounts_Manager/");
@@ -78,7 +78,7 @@ test("other sites sharing this address keep their saved files, and only our old 
   });
   await seed(page, { data: sample(TODAY) });
   await page.goto("/index.html");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
   await waitUntilReadyOffline(page);
   const names = await page.evaluate(() => caches.keys());
   expect(names).toContain("another-project-cache");
@@ -89,10 +89,10 @@ test("other sites sharing this address keep their saved files, and only our old 
 test("a link with extra details on the end still opens the app with no connection", async ({ page, context }) => {
   await seed(page, { data: sample(TODAY) });
   await page.goto("/index.html");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
   await waitUntilReadyOffline(page);
   await context.setOffline(true);
   await page.goto("/index.html?from=bookmark");
-  await expect(page.locator("h1")).toHaveText("Dashboard");
+  await expect(page.locator("h1")).toHaveText("Today");
   await context.setOffline(false);
 });

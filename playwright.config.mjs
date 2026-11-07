@@ -27,6 +27,8 @@ export default defineConfig({
     locale: "en-IN",
     // Off except in the offline tests, so every other test talks straight to the server.
     serviceWorkers: "block",
+    // Tests don't wait for springs to settle. One test turns motion back on to check it.
+    contextOptions: { reducedMotion: "reduce" },
   },
   projects: [
     // User flows run on a desktop and a phone.

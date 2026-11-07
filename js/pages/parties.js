@@ -4,6 +4,7 @@ import { allocatePayment, docTotals, openDocs, outstanding, settle, stateFromGst
 import { uid } from "../core/ids.js";
 import { num, round2, sumMoney } from "../core/money.js";
 import { emailError, gstinError, phoneError } from "../core/validate.js";
+import { withArt } from "../ui/artwork.js";
 import { $, $$, html, on, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -171,7 +172,7 @@ function renderList(root, ctx, kind) {
     ],
     rowClass: (r) => (r.party.active === false ? "row-inactive" : ""),
     columns: [
-      { key: "name", label: k.One, sortable: true, mobile: "title", value: (r) => r.party.name, render: (r) => html`<span class="cell-title"><a href="#/${k.page}/${r.party.id}">${r.party.name}</a></span>${r.party.contact ? html`<span class="cell-sub">${r.party.contact}</span>` : ""}` },
+      { key: "name", label: k.One, sortable: true, mobile: "title", value: (r) => r.party.name, render: (r) => withArt(r.party.name, html`<span class="cell-title"><a href="#/${k.page}/${r.party.id}">${r.party.name}</a></span>${r.party.contact ? html`<span class="cell-sub">${r.party.contact}</span>` : ""}`) },
       { key: "phone", label: "Phone", mobile: "meta", value: (r) => r.party.phone, render: (r) => r.party.phone },
       { key: "gstin", label: "GSTIN", mobile: "hide", value: (r) => r.party.gstin, render: (r) => html`<span class="small num">${r.party.gstin || ""}</span>` },
       { key: "billed", label: kind === "client" ? "Invoiced" : "Purchased", align: "num", sortable: true, mobile: "detail", render: (r) => ctx.money(r.billed) },
@@ -214,7 +215,7 @@ function renderDetail(root, ctx, kind, id) {
   setHTML(root, html`
     <div class="page">
       ${pageHead({
-        title: party.name,
+        title: party.name, art: party.name,
         back: { page: k.page, label: k.many },
         sub: [party.contact, party.phone].filter(Boolean).join(" · "),
         actions: html`

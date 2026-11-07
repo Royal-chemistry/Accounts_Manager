@@ -315,4 +315,42 @@ export function dashboardSummary(state, today) {
   };
 }
 
+const SOON_DAYS = 7;
+
+/**
+ * Everything to do with money that's late or due within a week, most overdue first: the Up Next queue.
+ * days is how far off the due date is, and negative when it's late.
+ */
+export function upNext(state, today) {
+  const items = [];
+  for (const u of upcoming(state, today)) {
+    if (!u.overdue && !u.soon) continue;
+    items.push({ key: `recurring:${u.r.id}`, kind: "recurring", id: u.r.id, name: u.r.name, detail: u.r.category || "Recurring payment", amount: num(u.r.amount), variable: !!u.r.variable, direction: "out", due: u.due });
+  }
+  for (const [side, direction] of [["receivable", "in"], ["payable", "out"]]) {
+    for (const d of openDocs(state, side)) {
+      if (!d.due || daysBetween(today, d.due) > SOON_DAYS) continue;
+      const source = (d.docType === "invoice" ? state.invoices : d.docType === "purchase" ? state.purchases : state.transactions).find((x) => x.id === d.id);
+      const label = d.docType === "invoice" ? `Invoice ${d.no}` : d.docType === "purchase" ? (d.no ? `Bill ${d.no}` : "Bill") : d.no || d.note || "Credit entry";
+      items.push({ key: `${d.docType}:${d.id}`, kind: d.docType, id: d.id, name: partyName(state, d.partyType, d.partyId, source) || label, detail: label, amount: d.balance, variable: false, direction, due: d.due, partyType: d.partyType, partyId: d.partyId });
+    }
+  }
+  return items
+    .map((i) => ({ ...i, days: daysBetween(today, i.due) }))
+    .sort((a, b) => a.due.localeCompare(b.due) || b.amount - a.amount);
+}
+
+/** The headline on the Today page, written from the queue. format turns a number into money. */
+export function todayStory(items, format) {
+  const late = items.filter((i) => i.days < 0);
+  const total = (list) => format(sumMoney(list.map((i) => i.amount)));
+  const lateIn = late.filter((i) => i.direction === "in");
+  const lateOut = late.filter((i) => i.direction === "out");
+  if (lateIn.length && lateOut.length) return { tone: 3, eyebrow: "Needs you today", title: `${late.length} things are late`, detail: `${total(lateIn)} to collect and ${total(lateOut)} to pay.` };
+  if (lateIn.length) return { tone: 3, eyebrow: "Needs you today", title: `${total(lateIn)} is late coming in`, detail: `${lateIn.length === 1 ? "1 payment is" : `${lateIn.length} payments are`} overdue, starting with ${lateIn[0].name}.` };
+  if (lateOut.length) return { tone: 3, eyebrow: "Needs you today", title: `${total(lateOut)} is late going out`, detail: `${lateOut.length === 1 ? "1 payment is" : `${lateOut.length} payments are`} overdue, starting with ${lateOut[0].name}.` };
+  if (items.length) return { tone: 8, eyebrow: "Coming up", title: `${items.length} ${items.length === 1 ? "thing is" : "things are"} due this week`, detail: `Next is ${items[0].name}.` };
+  return { tone: 4, eyebrow: "All clear", title: "You're all caught up", detail: "Nothing is late or due in the next 7 days." };
+}
+
 export { txBalance };

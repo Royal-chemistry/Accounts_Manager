@@ -5,6 +5,7 @@ import { uid } from "../core/ids.js";
 import { num, round2, sumMoney } from "../core/money.js";
 import { lowStock, MOVE_REASONS, stockLedger, valuation } from "../core/stock.js";
 import { uniqueError } from "../core/validate.js";
+import { withArt } from "../ui/artwork.js";
 import { $, downloadFile, html, on, raw, setHTML } from "../ui/dom.js";
 import { confirmDelete } from "../ui/confirm-delete.js";
 import { openForm } from "../ui/form.js";
@@ -188,7 +189,7 @@ function itemsTab(host, ctx) {
     toolbar: html`<button type="button" class="btn" data-items-csv>${icon("download")}CSV</button>`,
     rowClass: (r) => (r.item.active === false ? "row-inactive" : ""),
     columns: [
-      { key: "name", label: "Item", sortable: true, mobile: "title", value: (r) => r.item.name, render: (r) => html`<span class="cell-title"><a href="#/stock/${r.item.id}">${r.item.name}</a></span><span class="cell-sub">${[r.item.sku, r.item.category].filter(Boolean).join(" · ")}</span>` },
+      { key: "name", label: "Item", sortable: true, mobile: "title", value: (r) => r.item.name, render: (r) => withArt(r.item.name, html`<span class="cell-title"><a href="#/stock/${r.item.id}">${r.item.name}</a></span><span class="cell-sub">${[r.item.sku, r.item.category].filter(Boolean).join(" · ")}</span>`) },
       { key: "onHand", label: "On hand", align: "num", sortable: true, mobile: "amount", render: (r) => html`<span class="strong ${r.negative ? "text-danger" : ""}">${qty(r.onHand, r.item.unit)}</span>` },
       { key: "reorder", label: "Reorder at", align: "num", value: (r) => num(r.item.reorderLevel), render: (r) => (num(r.item.reorderLevel) ? r.item.reorderLevel : "—") },
       { key: "avgCost", label: "Average cost", align: "num", sortable: true, render: (r) => money(round2(r.avgCost)) },
@@ -245,7 +246,7 @@ function renderDetail(root, ctx, id) {
   setHTML(root, html`
     <div class="page">
       ${pageHead({
-        title: item.name, back: { page: "stock", label: "Stock" },
+        title: item.name, art: item.name, back: { page: "stock", label: "Stock" },
         sub: [item.sku, item.category].filter(Boolean).join(" · "),
         actions: html`
           <button type="button" class="btn" data-in>${icon("arrow-in")}Stock in</button>

@@ -10,7 +10,7 @@ let titleCounter = 0;
  * body: markup. foot: markup for the footer. size: "sm" | "lg" | "xl".
  * isDirty: when it returns true, closing asks before discarding. onClose runs after closing.
  */
-export function openModal({ title, body, foot = null, size = "", isDirty = null, onClose = null, form = false }) {
+export function openModal({ title, body, foot = null, size = "", cls = "", isDirty = null, onClose = null, form = false }) {
   const opener = document.activeElement;
   const titleId = `modal-title-${++titleCounter}`;
   const inner = html`
@@ -21,7 +21,7 @@ export function openModal({ title, body, foot = null, size = "", isDirty = null,
     <div class="modal-body">${body}</div>
     ${foot ? html`<div class="modal-foot">${foot}</div>` : ""}`;
   const dialog = toElement(html`
-    <dialog class="modal ${size ? `modal-${size}` : ""}" aria-labelledby="${titleId}">
+    <dialog class="modal ${size ? `modal-${size}` : ""} ${cls}" aria-labelledby="${titleId}">
       ${form ? html`<form novalidate>${inner}</form>` : inner}
     </dialog>`);
   document.body.appendChild(dialog);

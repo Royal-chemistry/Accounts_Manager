@@ -4,10 +4,12 @@
 
 **[Open the app](https://royal-chemistry.github.io/Accounts_Manager/)**, then choose **Explore with sample data** to look around first.
 
+The design takes its cue from the glass look in Apple's latest apps. It isn't made by or connected with Apple.
+
 [![Tests](https://github.com/Royal-chemistry/Accounts_Manager/actions/workflows/test.yml/badge.svg)](https://github.com/Royal-chemistry/Accounts_Manager/actions/workflows/test.yml)
 [![MIT licence](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
 
-![Raising an invoice, recording a part payment, and seeing the dashboard update](docs/images/demo.gif)
+![Working through Up Next: paying a bill moves straight on to the next item, then raising an invoice](docs/images/demo.gif)
 
 ## Who it's for
 
@@ -17,10 +19,21 @@ Tell it what kind of business you run, and it starts you with suitable expense c
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/dashboard-dark.png">
-  <img alt="The dashboard: cash and bank, what clients owe, what you owe, profit, salaries, stock, and what needs attention today" src="docs/images/dashboard-light.png">
+  <img alt="Today: a headline saying 9 things are late, key figures, and what's up next, under a floating glass sidebar and controls" src="docs/images/dashboard-light.png">
 </picture>
 
 ## What it does
+
+### Up Next: your money tasks, played like a queue
+Everything late or due within a week lines up in order. A small player floats above every page with what's next, and **Pay** or **Receive** goes straight to the right form. When you've paid, it moves on to the next one by itself. Skip what can wait, or open it to see the whole queue.
+
+![The Up Next sheet: Deccan Paper Mills, 21 days late, with a Pay button and the rest of the queue below](docs/images/up-next.png)
+
+### Today
+Your day at a glance, starting with a headline written from your own records: *9 things are late*, *2 things are due this week* or *You're all caught up*. Below it are your key figures, what's up next, and shelves of who owes you and who you owe.
+
+### Search everything
+One place to find any client, supplier, invoice, bill, staff member, stock item or cash book entry. Press `/` to get there.
 
 ### Money coming in
 - **GST invoices** with CGST and SGST, or IGST for other states, worked out from the GSTIN. Mixed tax rates, or enter a total and let it extract the tax.
@@ -72,11 +85,17 @@ Monthly or any date range, each with CSV export and a print layout that also sav
 ![A delete warning listing the invoice, its payment, and the bank balance, client balance and stock it affects](docs/images/delete.png)
 
 ### Pleasant to use all day
-Light and dark themes that follow your system, sorting, search and filters on every table, keyboard shortcuts (press `?` to see them), clear focus states, and layouts that work from a phone to a wide monitor. Every page is tested against WCAG AA, and the app works offline once loaded.
+Navigation floats above the page as glass, with a slider in Settings from **Most transparent** to **Most tinted**. Your figures always stay on solid backgrounds, and the glass goes solid if your device asks for reduced transparency or more contrast.
+
+Every client, supplier, staff member and stock item gets a colourful tile made from their name, and their page takes on its colour.
+
+Light and dark themes follow your system, and tables have sorting, search and filters. There are keyboard shortcuts (press `?` to see them), clear focus states, and layouts that work from a phone to a wide monitor. Every page is tested against WCAG AA, and the app works offline once loaded.
+
+![A client's page, with their artwork and its colour across the top](docs/images/client.png)
 
 | Invoice | Salary sheet | On a phone |
 |---|---|---|
-| ![Invoice print preview](docs/images/invoice.png) | ![Salary sheet](docs/images/salary.png) | ![Dashboard on a phone](docs/images/phone.png) |
+| ![Invoice print preview](docs/images/invoice.png) | ![Salary sheet](docs/images/salary.png) | ![Today on a phone, with the Up Next player above a floating tab bar](docs/images/phone.png) |
 
 ## How pay is calculated
 
@@ -133,7 +152,7 @@ Yes, under the MIT licence. There are no paid tiers, limits or sign-ups.
 It's in the browser you use, on that device only. To move it, use **Settings, Download backup**, then **Restore** on the other device.
 
 **Could I lose my data?**
-Clearing your browser's site data removes it, as can reinstalling the browser or a failing disk, so download a backup regularly. The dashboard reminds you. Private or incognito windows forget everything when closed, so don't use them for real records.
+Clearing your browser's site data removes it, as can reinstalling the browser or a failing disk, so download a backup regularly. The Today page reminds you. Private or incognito windows forget everything when closed, so don't use them for real records.
 
 **I use Safari or an iPhone. Is there anything special to know?**
 Safari can delete a website's stored data if you haven't visited it for 7 days of browser use. Adding the app to your Home Screen exempts it, but regular backups are the safest answer on any Apple device.
