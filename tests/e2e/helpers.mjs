@@ -1,6 +1,6 @@
 // Shared browser-test helpers. Every page visit should be wrapped in watchPage so that
 // console errors, crashes and failed requests fail the test instead of going unnoticed.
-import { expect } from "@playwright/test";
+import { test as base, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
 import { migrate } from "../../js/core/migrate.js";
@@ -10,6 +10,16 @@ import { migrate } from "../../js/core/migrate.js";
 const MACHINE_NOISE = ["kaspersky-labs.com"];
 
 export const TODAY = "2026-11-07";
+
+// Every browser test runs on the same day, so results can't depend on when they run.
+// Only the date is fixed. Timers such as the 8-second Undo keep running normally.
+export const test = base.extend({
+  context: async ({ context }, use) => {
+    await context.clock.setFixedTime(new Date(`${TODAY}T10:30:00+05:30`));
+    await use(context);
+  },
+});
+export { expect };
 
 export const fixture = (name) => JSON.parse(readFileSync(new URL(`../fixtures/${name}.json`, import.meta.url), "utf8"));
 export const sampleV2 = () => {

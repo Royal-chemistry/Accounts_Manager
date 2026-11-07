@@ -1,5 +1,5 @@
 // The app frame, components and safety screens.
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./helpers.mjs";
 import { moveToBin } from "../../js/core/bin.js";
 import { fixture, sampleV2, savedData, seed, watchPage } from "./helpers.mjs";
 

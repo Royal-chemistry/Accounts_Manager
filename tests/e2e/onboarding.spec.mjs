@@ -1,5 +1,5 @@
 // First visits, upgrades, Settings, backup and sample mode.
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./helpers.mjs";
 import { readFileSync } from "node:fs";
 import { fixture, sampleV2, savedData, seed, TODAY, watchPage } from "./helpers.mjs";
 
