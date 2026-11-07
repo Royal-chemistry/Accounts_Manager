@@ -25,13 +25,15 @@ import recurring from "./pages/recurring.js";
 import recycleBin from "./pages/recycle-bin.js";
 import reports from "./pages/reports.js";
 import salary from "./pages/salary.js";
+import search from "./pages/search.js";
 import settings from "./pages/settings.js";
 import staff from "./pages/staff.js";
 import stock from "./pages/stock.js";
 import styleguide from "./pages/styleguide.js";
+import { mountUpNext } from "./pages/up-next.js";
 
 const PAGES = Object.fromEntries([
-  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks, stock, reports,
+  dashboard, recycleBin, styleguide, settings, staff, attendance, salary, advances, clients, invoices, suppliers, purchases, cashbook, recurring, banks, stock, reports, search,
 ].map((p) => [p.id, p]));
 
 const root = document.getElementById("app");
@@ -78,7 +80,7 @@ function quickAdd() {
 }
 
 function startApp() {
-  const shell = createShell(root, ctx, { quickAdd, badges });
+  const shell = createShell(root, ctx, { quickAdd, badges, mountUpNext });
 
   function renderPage({ page, params }, { focus = true } = {}) {
     const def = PAGES[page] || PAGES.dashboard;
@@ -94,7 +96,14 @@ function startApp() {
     }
   }
 
-  onRouteChange((route) => { closeMenu(); renderPage(route); });
+  const fluid = window.matchMedia("(prefers-reduced-motion: no-preference)");
+  onRouteChange((route) => {
+    closeMenu();
+    if (!fluid.matches || !document.startViewTransition) { renderPage(route); return; }
+    const change = document.startViewTransition(() => renderPage(route));
+    // A browser skips a transition if another starts or the tab is hidden. That's fine, and isn't a crash.
+    for (const step of [change.ready, change.finished, change.updateCallbackDone]) step.catch(() => {});
+  });
 
   store.subscribe((_state, reason) => {
     if (reason === "quiet") { shell.paint(); return; }
@@ -125,7 +134,9 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "?") { e.preventDefault(); showShortcuts(); }
   else if (e.key === "/") {
     const search = $("[data-table-search]");
-    if (search) { e.preventDefault(); search.focus(); }
+    e.preventDefault();
+    if (search) search.focus();
+    else navigate("search");
   } else if (e.key.toLowerCase() === "n") {
     const add = $("[data-add]");
     if (add) { e.preventDefault(); add.click(); }

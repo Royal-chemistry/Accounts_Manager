@@ -16,6 +16,10 @@
   unicode-range: U+20A0-20AB, U+20AD-20C0;
 }
 
+/* Registered so the Up Next sheet's colour can move smoothly from one item to the next. */
+@property --art-a { syntax: "<color>"; inherits: true; initial-value: #1E5BD8; }
+@property --art-b { syntax: "<color>"; inherits: true; initial-value: #5B3FD6; }
+
 :root {
   color-scheme: light;
 
@@ -64,6 +68,11 @@
   --art-6a: #3D3FB8; --art-6b: #1E5BD8;
   --art-7a: #7A2FB0; --art-7b: #C2266B;
   --art-8a: #A15600; --art-8b: #BD4519;
+  --on-art-ink: #14141A;
+  --on-art-fill: rgb(255 255 255 / 0.16);
+  --on-art-fill-strong: rgb(255 255 255 / 0.26);
+  /* Apple's suggested dimming behind controls that float over bright artwork. */
+  --art-dim: rgb(0 0 0 / 0.35);
 
   /* Translucent fills for controls that sit on either the page or a card. */
   --fill: rgb(120 120 128 / 0.14);

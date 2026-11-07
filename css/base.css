@@ -111,6 +111,9 @@ strong, b { font-weight: 600; }
   input, select, textarea { font-size: var(--fs-16); }
 }
 
+/* Pages melt into each other. */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 180ms; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;

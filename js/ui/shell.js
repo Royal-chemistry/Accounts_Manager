@@ -7,7 +7,7 @@ import { monthPicker, mountMonthPicker } from "./month-picker.js";
 import { setTheme, themePreference, THEME_OPTIONS } from "./theme.js";
 
 export const NAV = [
-  { group: "Overview", items: [{ id: "dashboard", label: "Dashboard", icon: "dashboard" }, { id: "reports", label: "Reports", icon: "chart" }] },
+  { group: "Overview", items: [{ id: "dashboard", label: "Today", icon: "dashboard" }, { id: "search", label: "Search", icon: "search" }, { id: "reports", label: "Reports", icon: "chart" }] },
   { group: "Sales", items: [{ id: "clients", label: "Clients", icon: "building" }, { id: "invoices", label: "Invoices", icon: "receipt" }] },
   { group: "Purchases", items: [{ id: "suppliers", label: "Suppliers", icon: "truck" }, { id: "purchases", label: "Purchases", icon: "cart" }, { id: "stock", label: "Stock", icon: "box", module: "stock" }] },
   { group: "Money", items: [{ id: "cashbook", label: "Cash book", icon: "book" }, { id: "recurring", label: "Recurring", icon: "repeat" }, { id: "banks", label: "Banks & loans", icon: "bank" }] },
@@ -45,9 +45,10 @@ function navLinks(state, current, badges) {
     </div>`);
 }
 
-export function createShell(root, ctx, { quickAdd, badges }) {
+export function createShell(root, ctx, { quickAdd, badges, mountUpNext }) {
   let current = "dashboard";
   let collapsed = false;
+  let upNext = null;
   let paintedBrand = null;
   try { collapsed = localStorage.getItem(SIDE_KEY) === "collapsed"; } catch { /* not important */ }
 
@@ -67,6 +68,8 @@ export function createShell(root, ctx, { quickAdd, badges }) {
           <div class="top-group glass side-collapse hide-phone"><button type="button" class="icon-btn" data-toggle-side aria-label="Collapse or expand the sidebar" title="Collapse or expand the sidebar">${icon("sidebar")}</button></div>
           <div class="top-group glass top-title" aria-hidden="true" data-top-title></div>
           <div class="topbar-spacer"></div>
+          <div class="up-next-host" data-up-next-host></div>
+          <div class="topbar-spacer"></div>
           <div class="top-group glass" data-month-host></div>
           <button type="button" class="btn btn-primary" data-quick-add aria-haspopup="menu" aria-expanded="false" aria-label="Quick add">${icon("plus")}<span class="quick-add-label">Add</span></button>
           <div class="top-group glass">
@@ -81,6 +84,7 @@ export function createShell(root, ctx, { quickAdd, badges }) {
         <div class="tab-capsule glass">
           <div class="tab-track"><span class="lozenge" data-tab-lozenge aria-hidden="true" hidden></span><div class="tab-items" data-bottom></div></div>
         </div>
+        <a class="tab-search glass" href="#/search" data-tab-search aria-label="Search">${icon("search")}</a>
       </nav>
     </div>`);
 
@@ -105,8 +109,28 @@ export function createShell(root, ctx, { quickAdd, badges }) {
 
   // Once the large page title has scrolled away, a small copy appears in the floating controls.
   const topbar = $("[data-topbar]", root);
-  const onScroll = () => { topbar.toggleAttribute("data-scrolled", window.scrollY > 72); };
+  // On a phone, scrolling down shrinks the tab bar and moves Up Next beside it, as in Music. Scrolling up brings it back.
+  const app = $("[data-app]", root);
+  const canShrink = window.matchMedia("(max-width: 767px) and (prefers-reduced-motion: no-preference)");
+  let lastY = 0;
+  const setDock = (min) => {
+    if (min === app.hasAttribute("data-dock-min")) return;
+    app.toggleAttribute("data-dock-min", min);
+    placeLozenges();
+  };
+  const onScroll = () => {
+    const y = window.scrollY;
+    topbar.toggleAttribute("data-scrolled", y > 72);
+    if (!canShrink.matches || y < 80) setDock(false);
+    else if (y > lastY + 8) setDock(true);
+    else if (y < lastY - 8) setDock(false);
+    if (Math.abs(y - lastY) > 8 || y < 80) lastY = y;
+  };
   window.addEventListener("scroll", onScroll, { passive: true });
+  $(".bottom-bar", root).addEventListener("focusin", () => setDock(false));
+  $(".tab-capsule", root).addEventListener("click", (e) => {
+    if (app.hasAttribute("data-dock-min")) { e.preventDefault(); e.stopPropagation(); setDock(false); }
+  }, true);
 
   // The address bar holds the current page, so a normal jump to #main would count as changing page.
   $(".skip-link", root).addEventListener("click", (e) => {
@@ -138,8 +162,8 @@ export function createShell(root, ctx, { quickAdd, badges }) {
       <a class="nav-item" href="https://github.com/Royal-chemistry/Accounts_Manager" target="_blank" rel="noopener" title="Open source on GitHub">${icon("github")}<span class="nav-label">Open source · MIT</span></a>`);
     const payroll = state.settings.modules?.payroll !== false;
     const bottom = [
-      { id: "dashboard", label: "Home", icon: "dashboard" },
-      { id: "cashbook", label: "Cash book", icon: "book" },
+      { id: "dashboard", label: "Today", icon: "dashboard" },
+      { id: "cashbook", label: "Cash", icon: "book" },
       { id: "invoices", label: "Invoices", icon: "receipt" },
       payroll ? { id: "staff", label: "Staff", icon: "users" } : { id: "reports", label: "Reports", icon: "chart" },
     ];
@@ -148,6 +172,9 @@ export function createShell(root, ctx, { quickAdd, badges }) {
       ${bottom.map((i) => html`<a class="bottom-item" href="#/${i.id}" ${i.id === current ? raw('aria-current="page"') : ""}>${icon(i.icon)}${i.label}</a>`)}
       <button type="button" class="bottom-item" data-more ${!onBottom ? raw('aria-current="page"') : ""}>${icon("menu")}More</button>`);
     placeLozenges();
+    $("[data-tab-search]", root).toggleAttribute("aria-current", current === "search");
+    upNext ??= mountUpNext($("[data-up-next-host]", root), ctx);
+    upNext.paint();
     setHTML($("[data-month-host]", root), monthPicker(state.settings.month, ctx.today()));
     setHTML($("[data-banner]", root), ctx.store.isSample ? html`
       <div class="sample-banner">
@@ -209,7 +236,7 @@ export function createShell(root, ctx, { quickAdd, badges }) {
 
 export function showShortcuts() {
   const rows = [
-    ["/", "Search the current table"], ["N", "Add a new record on this page"], ["G then D", "Go to the dashboard"],
+    ["/", "Search the current table"], ["N", "Add a new record on this page"], ["G then D", "Go to Today"],
     ["U", "Undo, while the Undo message is showing"], ["?", "Show this list"], ["Esc", "Close a window or menu"],
   ];
   openModal({

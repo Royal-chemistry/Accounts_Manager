@@ -90,6 +90,25 @@
 .top-title { padding: 0 var(--s-4); font-weight: 650; white-space: nowrap; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity var(--t-med), transform var(--t-spring) var(--spring); }
 .topbar[data-scrolled] .top-title { opacity: 1; transform: none; }
 .topbar > .btn-primary { min-height: 44px; }
+.up-next-host { flex: 0 1 420px; min-width: 0; }
+.up-next-host:empty { display: none; }
+@media (max-width: 1279px) { .top-title { display: none; } }
+
+/* Up Next: the small player, like Music's. In the top bar on large screens, and floating lower down on small ones. */
+.up-next { display: flex; align-items: center; gap: var(--s-1); min-height: 44px; padding: 3px 4px 3px 5px; border-radius: var(--r-pill); }
+.up-next-open { display: flex; align-items: center; gap: var(--s-2); flex: 1 1 auto; min-width: 0; padding: 0; border: 0; border-radius: var(--r-pill); background: none; color: var(--text); text-align: left; }
+.up-next-open .art { width: 36px; height: 36px; border-radius: 50%; }
+.up-next-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.up-next-name { font-size: var(--fs-13); font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.up-next-sub { font-size: var(--fs-12); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.up-next .btn { flex: none; background: var(--selected); color: var(--text); font-weight: 700; box-shadow: var(--shadow-1); }
+.up-next .icon-btn { width: 34px; height: 34px; color: var(--text); }
+
+@media (max-width: 1023px) {
+  .up-next-host { flex: 0 0 0; }
+  .up-next { position: fixed; left: calc(var(--side-width) + (100% - var(--side-width)) / 2); bottom: var(--s-4); z-index: var(--z-bottom); width: min(440px, calc(100% - var(--side-width) - var(--s-8))); transform: translateX(-50%); }
+  .app:has(.up-next) .main { padding-bottom: calc(var(--bottom-height) + var(--s-10)); }
+}
 
 .sample-banner { display: flex; align-items: center; justify-content: center; gap: var(--s-3); flex-wrap: wrap; margin: 0 var(--s-8) var(--s-2); padding: var(--s-2) var(--s-4); border-radius: var(--r-3); background: var(--warning-soft); color: var(--text); font-size: var(--fs-13); font-weight: 500; text-align: center; }
 
@@ -178,6 +197,24 @@
   }
   .bottom-item[aria-current="page"] { color: var(--primary-text); font-weight: 650; }
   .bottom-item:focus-visible { outline-offset: -2px; }
+  .tab-search { flex: none; display: flex; align-items: center; justify-content: center; width: var(--bottom-height); height: var(--bottom-height); border-radius: 50%; color: var(--text); pointer-events: auto; }
+  .tab-search[aria-current] { color: var(--primary-text); }
+
+  /* Up Next floats on its own just above the tab bar. */
+  .up-next { left: var(--s-3); right: var(--s-3); bottom: calc(var(--side-gap) + var(--bottom-height) + var(--s-2) + env(safe-area-inset-bottom)); width: auto; min-height: 54px; padding: 4px 6px; transform: none; transition: left var(--t-spring) var(--spring), right var(--t-spring) var(--spring), bottom var(--t-spring) var(--spring), min-height var(--t-spring) var(--spring); }
+  .up-next .icon-btn { width: 40px; height: 40px; }
+  .up-next-open .art { width: 42px; height: 42px; }
+  .app:has(.up-next) .main { padding-bottom: calc(var(--bottom-height) * 2 + var(--s-10) + env(safe-area-inset-bottom)); }
+  body:has(.up-next) .toasts { bottom: calc(var(--bottom-height) * 2 + var(--s-6) + env(safe-area-inset-bottom)); }
+
+  /* Scrolling down shrinks the tabs to the current one, and Up Next moves in beside it. */
+  .tab-capsule { transition: flex-basis var(--t-spring) var(--spring); }
+  .app[data-dock-min] .tab-capsule { flex: 0 0 var(--bottom-height); }
+  .app[data-dock-min] .tab-items { grid-template-columns: minmax(0, 1fr); }
+  .app[data-dock-min] .bottom-item:not([aria-current]) { display: none; }
+  .app[data-dock-min] .bottom-item { font-size: 0; }
+  .app[data-dock-min] .up-next { left: calc(var(--s-3) + var(--bottom-height) + var(--s-2)); right: calc(var(--s-3) + var(--bottom-height) + var(--s-2)); bottom: calc(var(--side-gap) + env(safe-area-inset-bottom)); min-height: var(--bottom-height); }
+  .app[data-dock-min] .up-next .btn { display: none; }
 }
 
 /* Full-page screens: welcome, rescue and crash. */
