@@ -2,7 +2,7 @@
 
 Notable changes to Accounts Manager. Versions follow [semantic versioning](https://semver.org), and the format follows [Keep a Changelog](https://keepachangelog.com).
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-11-07
 
 A rebuild of the whole app. Everything from 1.x is still here, your saved data upgrades automatically, and your old copy is kept untouched as a fallback.
 
