@@ -9,12 +9,12 @@ import { $, downloadFile, html, on, pickFile, raw, setHTML } from "../ui/dom.js"
 import { icon } from "../ui/icons.js";
 import { mountForm } from "../ui/form.js";
 import { askConfirm, askTyped } from "../ui/modal.js";
-import { setTheme, themePreference, THEME_OPTIONS } from "../ui/theme.js";
+import { glassStrength, setGlassStrength, setTheme, themePreference, THEME_OPTIONS } from "../ui/theme.js";
 import { toast } from "../ui/toast.js";
 import { pageHead } from "./_common.js";
 import { applyProfile, profileFields, stateOptions } from "./onboarding.js";
 
-const TABS = [["profile", "Business"], ["payroll", "Payroll"], ["invoices", "Invoices & GST"], ["categories", "Categories"], ["modules", "Modules"], ["data", "Your data"]];
+const TABS = [["profile", "Business"], ["payroll", "Payroll"], ["invoices", "Invoices & GST"], ["categories", "Categories"], ["modules", "Modules"], ["appearance", "Appearance"], ["data", "Your data"]];
 
 function profileTab(host, ctx) {
   const s = ctx.state();
@@ -143,29 +143,42 @@ function categoriesTab(host, ctx) {
 
 function modulesTab(host, ctx) {
   const m = ctx.state().settings.modules;
-  const pref = themePreference();
   setHTML(host, html`
-    <div class="stack">
-      <section class="stack-sm">
-        <h2>Modules</h2>
-        <p class="muted">Turn off what you don't need. Anything already recorded is kept and comes back if you turn it on again.</p>
-        <label class="check"><input type="checkbox" data-module="stock" ${m.stock ? raw("checked") : ""}><span class="check-label">Stock and inventory</span></label>
-        <label class="check"><input type="checkbox" data-module="payroll" ${m.payroll !== false ? raw("checked") : ""}><span class="check-label">Staff and payroll</span></label>
-        <label class="check"><input type="checkbox" data-module="gst" ${m.gst !== false ? raw("checked") : ""}><span class="check-label">GST on invoices and reports</span></label>
-      </section>
-      <hr>
-      <section class="stack-sm">
-        <h2>Appearance</h2>
-        <div class="seg" role="radiogroup" aria-label="Colour theme">
-          ${THEME_OPTIONS.map((o) => html`<label><input type="radio" name="theme" value="${o.id}" ${o.id === pref ? raw("checked") : ""}><span>${icon(o.icon, { cls: "icon-sm" })}${o.label}</span></label>`)}
-        </div>
-      </section>
-    </div>`);
+    <section class="stack-sm">
+      <h2>Modules</h2>
+      <p class="muted">Turn off what you don't need. Anything already recorded is kept and comes back if you turn it on again.</p>
+      <label class="check"><input type="checkbox" data-module="stock" ${m.stock ? raw("checked") : ""}><span class="check-label">Stock and inventory</span></label>
+      <label class="check"><input type="checkbox" data-module="payroll" ${m.payroll !== false ? raw("checked") : ""}><span class="check-label">Staff and payroll</span></label>
+      <label class="check"><input type="checkbox" data-module="gst" ${m.gst !== false ? raw("checked") : ""}><span class="check-label">GST on invoices and reports</span></label>
+    </section>`);
   on(host, "change", "[data-module]", (e, el) => {
     ctx.store.update((s) => { s.settings.modules[el.dataset.module] = el.checked; }, "quiet");
     toast(`${el.closest("label").textContent.trim()} is now ${el.checked ? "on" : "off"}`);
   });
+}
+
+function appearanceTab(host) {
+  const pref = themePreference();
+  const forcedSolid = window.matchMedia("(prefers-reduced-transparency: reduce), (prefers-contrast: more)").matches;
+  setHTML(host, html`
+    <div class="stack">
+      <section class="stack-sm">
+        <h2>Theme</h2>
+        <div class="seg" role="radiogroup" aria-label="Colour theme">
+          ${THEME_OPTIONS.map((o) => html`<label><input type="radio" name="theme" value="${o.id}" ${o.id === pref ? raw("checked") : ""}><span>${icon(o.icon, { cls: "icon-sm" })}${o.label}</span></label>`)}
+        </div>
+      </section>
+      <hr>
+      <section class="stack-sm glass-setting">
+        <h2><label for="glass-strength">Glass</label></h2>
+        <p class="muted">How see-through the menus and floating controls are. Your figures always stay on solid backgrounds.</p>
+        <input type="range" class="range" id="glass-strength" data-glass min="0" max="1" step="0.05" value="${glassStrength()}" aria-describedby="glass-ends" ${forcedSolid ? raw("disabled") : ""}>
+        <div class="range-ends small muted" id="glass-ends"><span>Most transparent</span><span>Most tinted</span></div>
+        ${forcedSolid ? html`<p class="small muted">Your device is set to reduce transparency, so the glass stays solid.</p>` : ""}
+      </section>
+    </div>`);
   on(host, "change", 'input[name="theme"]', (e, el) => setTheme(el.value));
+  on(host, "input", "[data-glass]", (e, el) => setGlassStrength(el.value));
 }
 
 function summaryLines(summary) {
@@ -273,7 +286,7 @@ export default {
         <section class="card" data-tab-body></section>
       </div>`);
     const host = $("[data-tab-body]", root);
-    const render = { profile: profileTab, payroll: payrollTab, invoices: invoicesTab, categories: categoriesTab, modules: modulesTab, data: dataTab }[tab];
+    const render = { profile: profileTab, payroll: payrollTab, invoices: invoicesTab, categories: categoriesTab, modules: modulesTab, appearance: appearanceTab, data: dataTab }[tab];
     render(host, ctx, () => this.render(root, ctx, params));
   },
 };

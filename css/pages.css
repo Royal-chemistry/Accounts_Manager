@@ -18,6 +18,11 @@
 .swatch-warning { background: var(--warning-soft); color: var(--warning); }
 .swatch-info { background: var(--info-soft); color: var(--info); }
 
+/* The glass slider in Settings */
+.glass-setting { max-width: 520px; }
+.range { display: block; width: 100%; min-height: var(--control); accent-color: var(--primary); }
+.range-ends { display: flex; justify-content: space-between; gap: var(--s-3); }
+
 /* Dashboard */
 .dash-cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--s-4); align-items: start; }
 .dash-col { display: flex; flex-direction: column; gap: var(--s-4); min-width: 0; }
