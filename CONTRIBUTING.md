@@ -52,6 +52,7 @@ Some rules the tests enforce:
 - **Balances, stock and report figures are never stored.** They're worked out from the records each time, so they can't drift out of step.
 - **No `confirm()`, `alert()` or `prompt()`.** Deletes go through `confirmDelete`, so they get the warning, the Recycle Bin and Undo.
 - **No emojis in the UI, no inline styles, and nothing loaded from other servers.** The Content Security Policy in `index.html` is a promise to users that their data can't leave the browser. Please don't weaken it.
+- **A visitor downloads under 350 KB,** counting the compression GitHub Pages applies. There's no build step to shrink things later, so new code has to earn its size.
 - **Markup goes through `html` from `js/ui/dom.js`.** It escapes everything by default. Use `raw` only for markup written in this codebase, never for anything a user typed.
 
 ## Changing the saved data

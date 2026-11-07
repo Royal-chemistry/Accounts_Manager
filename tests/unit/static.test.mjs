@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { gzipSync } from "node:zlib";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 
@@ -27,6 +28,15 @@ test("every browser test runs on the fixed date, so results can't depend on the 
   for (const file of walk("tests/e2e", [".spec.mjs"])) {
     assert.ok(!read(file).includes('"@playwright/test"'), `${file} should import test from ./helpers.mjs`);
   }
+});
+
+test("a visitor downloads under 350 KB, with the compression GitHub Pages applies", () => {
+  const files = ["index.html", ...JS(), ...CSS(), ...walk("assets", [".svg", ".woff2"])];
+  const bytes = files.reduce((sum, f) => {
+    const body = readFileSync(join(ROOT, f));
+    return sum + (f.endsWith(".woff2") ? body.length : gzipSync(body).length); // fonts are already compressed
+  }, 0);
+  assert.ok(bytes < 350 * 1024, `The app is ${Math.round(bytes / 1024)} KB to download`);
 });
 
 test("GitHub Pages will serve files whose names start with an underscore", () => {
