@@ -57,6 +57,7 @@ const FILES = [
   "js/ui/confirm-delete.js",
   "js/ui/dom.js",
   "js/ui/form.js",
+  "js/ui/glass.js",
   "js/ui/icons.js",
   "js/ui/logo-field.js",
   "js/ui/menu.js",
