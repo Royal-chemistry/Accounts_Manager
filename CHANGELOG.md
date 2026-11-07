@@ -2,6 +2,30 @@
 
 Notable changes to Accounts Manager. Versions follow [semantic versioning](https://semver.org), and the format follows [Keep a Changelog](https://keepachangelog.com).
 
+## [2.1.0] - Unreleased
+
+A new look, inspired by the glass design in Apple's latest apps, and a few new ways of working built around it. Your records and figures aren't touched by this update.
+
+### Added
+
+- **Up Next:** everything that's late or due within a week, as a queue. A small player floats above every page with what's next, and Pay or Receive goes straight to the right form. Paying moves on to the next item by itself. Open it for the full queue.
+- **Today:** the dashboard now leads with a plain-language headline written from your records, what's up next, and shelves of who owes you and who you owe.
+- **Search:** one place to find any client, supplier, invoice, bill, staff member, stock item or cash book entry. Press `/` to get there.
+- **Artwork:** every client, supplier, staff member and stock item gets a colourful tile made from their name, and their page takes on its colour.
+- **A glass slider** in Settings, Appearance, from Most transparent to Most tinted.
+
+### Changed
+
+- The sidebar and top controls now float above the page as glass. On phones, a floating tab bar shrinks as you scroll down.
+- Forms slide up as sheets on phones, buttons are pills, and pages fade softly into each other.
+- Text is larger on phones.
+- Apple devices now use their own system font, and everything else still uses Inter.
+
+### Accessibility
+
+- Glass goes solid when your device asks for reduced transparency or more contrast, and motion stops when it asks for reduced motion.
+- Figures and tables always stay on solid backgrounds, and new tests check text on glass against the worst thing that could scroll beneath it.
+
 ## [2.0.0] - 2026-11-07
 
 A rebuild of the whole app. Everything from 1.x is still here, your saved data upgrades automatically, and your old copy is kept untouched as a fallback.
