@@ -212,6 +212,17 @@ test("dashboard: low stock only shows when the module is on", () => {
   assert.equal(dashboardSummary(s, TODAY).lowStock.length, 0);
 });
 
+test("dashboard: a document is either overdue or due soon, up to a week ahead", () => {
+  const s = blank(TODAY);
+  const bill = (id, due) => ({ id, supplierId: "s1", billNo: id, date: "2026-01-01", due, lines: [{ desc: "x", qty: 1, rate: 100, gstRate: 0 }], payments: [] });
+  const addDay = (n) => new Date(Date.UTC(...TODAY.split("-").map((x, i) => Number(x) - (i === 1 ? 1 : 0))) + n * 864e5).toISOString().slice(0, 10);
+  s.purchases = [bill("late", addDay(-1)), bill("today", addDay(0)), bill("week", addDay(7)), bill("later", addDay(8)), bill("none", "")];
+  const d = dashboardSummary(s, TODAY);
+  assert.deepEqual(d.overduePayables.map((x) => x.id), ["late"]);
+  assert.deepEqual(d.dueSoonPayables.map((x) => x.id), ["today", "week"]);
+  assert.deepEqual(d.dueSoonReceivables, []);
+});
+
 test("reports handle an empty business", () => {
   const s = blank(TODAY);
   assert.equal(profitLoss(s, OCT).netProfit, 0);

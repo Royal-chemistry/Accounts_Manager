@@ -279,6 +279,7 @@ export function dashboardSummary(state, today) {
   const receivableDocs = openDocs(state, "receivable");
   const payableDocs = openDocs(state, "payable");
   const overdue = (d) => (d.due ? d.due < today : false);
+  const dueSoon = (d) => !!d.due && d.due >= today && daysBetween(today, d.due) <= 7;
   const pl = profitLoss(state, { from: monthStart(month), to: monthEnd(month) });
   let salariesToPay = 0;
   if (state.settings.modules?.payroll !== false) {
@@ -301,8 +302,10 @@ export function dashboardSummary(state, today) {
     month, accounts, cashTotal, bankTotal, totalMoney: round2(cashTotal + bankTotal),
     receivables: sumMoney(receivableDocs.map((d) => d.balance)),
     overdueReceivables: receivableDocs.filter(overdue),
+    dueSoonReceivables: receivableDocs.filter(dueSoon),
     payables: sumMoney(payableDocs.map((d) => d.balance)),
     overduePayables: payableDocs.filter(overdue),
+    dueSoonPayables: payableDocs.filter(dueSoon),
     profit: pl.netProfit, income: pl.revenue.total,
     salariesToPay: round2(salariesToPay),
     lowStock: lowStock(ledger), stockValue: valuation(ledger),
