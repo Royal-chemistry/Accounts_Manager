@@ -1,7 +1,6 @@
 // Staff, attendance, the pay sheet, the salary sheet, payslips and advances.
-import { test, expect } from "./helpers.mjs";
 import { readFileSync } from "node:fs";
-import { fixture, sampleV2, savedData, seed, watchPage } from "./helpers.mjs";
+import { test, expect, fixture, sampleV2, savedData, seed, watchPage } from "./helpers.mjs";
 import { accountBalances } from "../../js/core/ledger.js";
 import { payFor } from "../../js/core/payroll.js";
 

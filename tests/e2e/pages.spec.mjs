@@ -1,8 +1,7 @@
 // Every page, at every width, in both themes. Fails on console errors, crashes, failed or third-party
 // requests, sideways scrolling, or anything axe finds. Saves a screenshot of each for review.
-import { test, expect } from "./helpers.mjs";
 import { mkdirSync } from "node:fs";
-import { ALL_PAGES, expectAccessible, expectNoHorizontalScroll, sampleV2, seed, watchPage } from "./helpers.mjs";
+import { test, expect, ALL_PAGES, expectAccessible, expectNoHorizontalScroll, sampleV2, seed, watchPage } from "./helpers.mjs";
 
 const WIDTHS = [375, 768, 1024, 1440];
 const THEMES = ["light", "dark"];

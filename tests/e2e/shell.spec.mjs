@@ -1,7 +1,6 @@
 // The app frame, components and safety screens.
-import { test, expect } from "./helpers.mjs";
 import { moveToBin } from "../../js/core/bin.js";
-import { fixture, sampleV2, savedData, seed, watchPage } from "./helpers.mjs";
+import { test, expect, fixture, sampleV2, savedData, seed, watchPage } from "./helpers.mjs";
 
 test("an existing v1 user lands on their data with every figure intact, and the old data untouched", async ({ page }) => {
   const problems = watchPage(page);

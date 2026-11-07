@@ -1,7 +1,6 @@
 // First visits, upgrades, Settings, backup and sample mode.
-import { test, expect } from "./helpers.mjs";
 import { readFileSync } from "node:fs";
-import { fixture, sampleV2, savedData, seed, TODAY, watchPage } from "./helpers.mjs";
+import { test, expect, fixture, sampleV2, savedData, seed, TODAY, watchPage } from "./helpers.mjs";
 
 test.describe("a new visitor", () => {
   test("sees the welcome screen, gets categories for their business, and is never asked again", async ({ page }) => {
