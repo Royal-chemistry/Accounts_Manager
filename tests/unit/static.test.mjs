@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
@@ -26,6 +26,16 @@ const UI = () => [...JS(), ...CSS(), "index.html"];
 test("every browser test runs on the fixed date, so results can't depend on the day they run", () => {
   for (const file of walk("tests/e2e", [".spec.mjs"])) {
     assert.ok(!read(file).includes('"@playwright/test"'), `${file} should import test from ./helpers.mjs`);
+  }
+});
+
+test("every link and picture in the docs points at something that exists", () => {
+  for (const doc of ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "tests/fixtures/README.md"]) {
+    const text = read(doc);
+    const targets = [...text.matchAll(/\]\(([^)\s]+)\)/g), ...text.matchAll(/(?:src|srcset)="([^"]+)"/g)].map((m) => m[1]);
+    for (const target of targets.filter((t) => !/^(https?:|mailto:|#)/.test(t))) {
+      assert.ok(existsSync(join(ROOT, dirname(doc), target.split("#")[0])), `${doc} links to ${target}, which doesn't exist`);
+    }
   }
 });
 

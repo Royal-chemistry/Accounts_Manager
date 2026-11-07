@@ -4,7 +4,7 @@ These files pin down how the old (v1) app behaves, so the new code can be held t
 
 | File | What it is |
 |---|---|
-| `v1-sample.json` | The sample data saved by the live v1 app, captured with `tests/tools/capture-v1.mjs` |
+| `v1-sample.json` | The sample data saved by the live v1 app, captured from it before v2 replaced it |
 | `v1-edge.json` | Hand-written v1 data with the awkward things real data can contain: text where numbers belong, missing fields, removed staff and clients, unknown accounts, overpaid invoices |
 | `v1-empty.json` | The smallest data the v1 app would accept |
 | `dutypay-v1.json` | Data shaped like the first release, saved under the old `dutypay:v1` key |

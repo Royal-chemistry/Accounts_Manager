@@ -1,6 +1,6 @@
 {
   "name": "accounts-manager",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Free, private accounts for small businesses. Runs entirely in your browser.",
   "type": "module",
   "private": true,
