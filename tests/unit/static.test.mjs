@@ -19,10 +19,15 @@ function walk(dir, ext, out = []) {
 }
 
 const read = (p) => readFileSync(join(ROOT, p), "utf8");
-const LEGACY = new Set(["js/app.js", "js/calc.js", "css/style.css"].map((p) => p.replaceAll("/", "\\")).concat(["js/app.js", "js/calc.js", "css/style.css"]));
-const JS = () => walk("js", [".js"]).filter((p) => !LEGACY.has(p));
-const CSS = () => walk("css", [".css"]).filter((p) => !LEGACY.has(p));
+const JS = () => walk("js", [".js"]);
+const CSS = () => walk("css", [".css"]);
 const UI = () => [...JS(), ...CSS(), "index.html"];
+
+test("every browser test runs on the fixed date, so results can't depend on the day they run", () => {
+  for (const file of walk("tests/e2e", [".spec.mjs"])) {
+    assert.ok(!read(file).includes('"@playwright/test"'), `${file} should import test from ./helpers.mjs`);
+  }
+});
 
 test("no blocking browser popups anywhere", () => {
   for (const file of JS()) {
