@@ -86,6 +86,8 @@ test("every colour pair passes WCAG AA in both themes", () => {
       pair("border-strong", bg, 3);
       pair("primary", bg, 3);
     }
+    pair("series-1", "surface", 3);
+    pair("series-2", "surface", 3);
     pair("on-primary", "primary", 4.5);
     pair("on-primary", "primary-hover", 4.5);
     pair("on-danger", "danger", 4.5);

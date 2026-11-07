@@ -44,6 +44,10 @@
   --info: #0B6BA8;
   --info-soft: #E3F1FA;
 
+  /* Chart series. Checked for colour-blind separation against each theme's surface. */
+  --series-1: #2B4BC4;
+  --series-2: #C2570C;
+
   --backdrop: rgb(15 20 30 / 0.5);
   --shadow-1: 0 1px 2px rgb(15 20 30 / 0.06), 0 1px 3px rgb(15 20 30 / 0.05);
   --shadow-2: 0 8px 24px rgb(15 20 30 / 0.14), 0 2px 6px rgb(15 20 30 / 0.06);
@@ -115,6 +119,9 @@
   --warning-soft: #2E2413;
   --info: #6CC0F0;
   --info-soft: #132A38;
+
+  --series-1: #6E8AEC;
+  --series-2: #CC7A33;
 
   --backdrop: rgb(0 0 0 / 0.6);
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
